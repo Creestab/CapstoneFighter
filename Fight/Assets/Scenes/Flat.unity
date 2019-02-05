@@ -538,8 +538,9 @@ MonoBehaviour:
   jumpSpeedGrounded: 100
   jumpSpeedAirborn: 100
   numAirJumps: 1
-  inputBuffer: 7
+  inputBuffer: 2
   jumps: 0
+  frmsSH: 3
 --- !u!54 &893512196
 Rigidbody:
   m_ObjectHideFlags: 0

@@ -17,7 +17,7 @@ public class PlayerController : MonoBehaviour {
     public int inputBuffer;
     private float gMoveMod = 5;   //Scales the speed of grounded movement
     private float aMoveMod = 4;    //Scales the speed of aerial movement
-    private float jHeightMod = 10;  //Scales the force of jumping
+    private float jHeightMod = 15;  //Scales the force of jumping
     private float ffMod = 10;       //Scales the force of fastfalling
     private float slideMod = 1;    //Scales the friction on stage
 
@@ -28,11 +28,13 @@ public class PlayerController : MonoBehaviour {
     private bool slide;         //Is the player sliding on stage
     private int frmsSliding=0;  //How long has the player been sliding
     public int jumps;           //How many jumps does the player have
+    public int frmsSH=3;        //Frame window for shorthopping
     private float moveHorz;     //Horizontal force
     private float moveVert;     //Vertical force
 
-    //Button buffer tracking
+    //Buffer tracking
     private int bfrJump = 0;
+    private int bfrSH = 0;
 
 	// Use this for initialization
 	void Start () {
@@ -60,13 +62,13 @@ public class PlayerController : MonoBehaviour {
         //////////////////////////////
         //////MAIN CONTROLLER/////////
         //////////////////////////////
-        if (Input.GetKey("d")) //Input move right
+        if (Input.GetKey("d")) //input move right
         {
             if (!actable && airborn) {moveHorz = moveSpeed * (aMoveMod / 10);} //Uses forces if airborn and inactible (influences knockback and special fall)
             if (actable && airborn) {transform.position += transform.right * moveSpeed * (aMoveMod / 1000); } //Uses transform if airborn and actable
             if (actable && !airborn) {transform.position += transform.right * moveSpeed * (gMoveMod / 1000);} //Uses transform if grounded
         }
-        if (Input.GetKey("a")) //Input move left
+        if (Input.GetKey("a")) //input move left
         {
             if (!actable && airborn) {moveHorz = -moveSpeed * (aMoveMod / 10); } //Uses forces if airborn and inactible (influences knockback and special fall)
             if (actable && airborn) {transform.position -= transform.right * moveSpeed * (aMoveMod / 1000); } //Uses transform if airborn and actable
@@ -76,13 +78,14 @@ public class PlayerController : MonoBehaviour {
         //Processes only executable when actable
         if (actable)
         {
-            //Input jump if available
+            //input jump if available
             if (bfrJump != 0 && jumps != 0) {Jump(); bfrJump = 0;} 
 
-            //Input crouch or fastfall
-            if (Input.GetKeyDown("s"))
+            //input fastfall
+            if (Input.GetKey("s") && !fastfall && airborn && rb.velocity.y <= 0)
             {
-                if (airborn && rb.velocity.y <= 0) {moveVert = -jumpSpeedAirborn * ffMod;}
+                moveVert = -jumpSpeedAirborn * ffMod;
+                fastfall = true;
             }
         }
 
@@ -91,12 +94,16 @@ public class PlayerController : MonoBehaviour {
         rb.AddForce(movement);
 	}
 
+    //////////////////////////////
+    //////////METHODS/////////////
+    //////////////////////////////
+
     //Character state processing
     private void CharState()
     {
         moveVert = 0;
 
-        //Slide state processing
+        //slide state processing
         if (slide)
         {
             frmsSliding++;
@@ -109,19 +116,39 @@ public class PlayerController : MonoBehaviour {
     //Input buffer tracking
     private void InputBuffer()
     {
-        //Jump buffer
-        if(bfrJump > 0) {bfrJump--;}
-        if(Input.GetKeyDown("space")) {bfrJump = inputBuffer;}
+        //adjust buffers
+        if (bfrJump > 0) {bfrJump--;}
+
+        //jump input processing
+        if (Input.GetKeyDown("space"))
+        {
+            bfrSH = 0;
+            if (airborn) {bfrJump = inputBuffer;}
+        }
+        if (!airborn)
+        {
+            if (Input.GetKey("space")) {bfrSH++;}
+            if (Input.GetKeyUp("space") && bfrSH <= frmsSH) {bfrJump = inputBuffer;}
+            if (bfrSH > frmsSH) {bfrJump = inputBuffer;}
+        }
     }
 
     private void Jump()
     {
-        if (!airborn) {moveVert = jumpSpeedGrounded * jHeightMod;}
+        if (!airborn)
+        {
+            if (bfrSH > frmsSH) {moveVert = jumpSpeedGrounded * jHeightMod;}
+            else {moveVert = jumpSpeedGrounded * jHeightMod / 1.5f;}
+            bfrSH = 0;
+            bfrJump = 0;
+        }
         else
         {
             rb.velocity = new Vector3(rb.velocity.x, 0.0f, 0.0f);
             moveVert = jumpSpeedAirborn * jHeightMod;
             jumps--;
+            bfrSH = 0;
+            bfrJump = 0;
         }
     }
 
@@ -130,14 +157,15 @@ public class PlayerController : MonoBehaviour {
         //Landing on stage
         if (collision.gameObject.name == "TopPlane")
         {
-            jumps = numAirJumps + 1; //Resets available jumps to full
+            jumps = numAirJumps + 1; //resets available jumps to full
             airborn = false;
             slide = true;
+            fastfall = false;
         }
 
         if (collision.gameObject.name == "LeftPlane" || collision.gameObject.name == "RightPlane")
         {
-            jumps = numAirJumps; //Adds jumps from ledge
+            jumps = numAirJumps; //adds jumps from ledge
             airborn = false;
             slide = false;
         }
@@ -145,7 +173,7 @@ public class PlayerController : MonoBehaviour {
 
     private void OnCollisionExit(Collision collision)
     {
-        if(collision.gameObject.name == "Stage") {jumps--;} //Uses a jump
+        if(collision.gameObject.name == "Stage") {jumps--;} //uses a jump
         airborn = true;
         slide = false;
     }
