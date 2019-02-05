@@ -76,9 +76,11 @@ public class PlayerController : MonoBehaviour {
         //Processes only executable when actable
         if (actable)
         {
-            if (bfrJump != 0 && jumps != 0) { Jump(); } //Input jump if available
+            //Input jump if available
+            if (bfrJump != 0 && jumps != 0) {Jump(); bfrJump = 0;} 
 
-            if (Input.GetKeyDown("s")) //Input crouch or fastfall
+            //Input crouch or fastfall
+            if (Input.GetKeyDown("s"))
             {
                 if (airborn && rb.velocity.y <= 0) {moveVert = -jumpSpeedAirborn * ffMod;}
             }
@@ -117,6 +119,7 @@ public class PlayerController : MonoBehaviour {
         if (!airborn) {moveVert = jumpSpeedGrounded * jHeightMod;}
         else
         {
+            rb.velocity = new Vector3(rb.velocity.x, 0.0f, 0.0f);
             moveVert = jumpSpeedAirborn * jHeightMod;
             jumps--;
         }
@@ -124,14 +127,25 @@ public class PlayerController : MonoBehaviour {
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.name == "Stage") {jumps = numAirJumps + 1;} //Resets available jumps
-        airborn = false;
-        slide = true;
+        //Landing on stage
+        if (collision.gameObject.name == "TopPlane")
+        {
+            jumps = numAirJumps + 1; //Resets available jumps to full
+            airborn = false;
+            slide = true;
+        }
+
+        if (collision.gameObject.name == "LeftPlane" || collision.gameObject.name == "RightPlane")
+        {
+            jumps = numAirJumps; //Adds jumps from ledge
+            airborn = false;
+            slide = false;
+        }
     }
 
     private void OnCollisionExit(Collision collision)
     {
-        if(collision.gameObject.name == "Stage") {jumps--;} //Resets available jumps
+        if(collision.gameObject.name == "Stage") {jumps--;} //Uses a jump
         airborn = true;
         slide = false;
     }
