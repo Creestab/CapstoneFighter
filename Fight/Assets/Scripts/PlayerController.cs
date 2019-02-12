@@ -4,7 +4,20 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour {
 
+    //Control bindings
+    public string ctrlLeft;
+    public string ctrlRight;
+    public string ctrlUp;
+    public string ctrlDown;
+    public string ctrlJump;
+    public string ctrlAtk;
+    public string ctrlSpec;
+    public string ctrlBlock;
+    public string ctrlGrab;
+
     //Character base attributes
+    public int playerNum;
+    public Vector3 spawnPoint;
     public float moveSpeed;
     public float jumpSpeedGrounded;
     public float jumpSpeedAirborn;
@@ -26,20 +39,25 @@ public class PlayerController : MonoBehaviour {
     private bool airborn;       //Is the player in the air
     private bool fastfall;      //Is the player fastfalling
     private bool slide;         //Is the player sliding on stage
-    private int frmsSliding=0;  //How long has the player been sliding
-    public int jumps;           //How many jumps does the player have
-    public int frmsSH=3;        //Frame window for shorthopping
+    private int frmsSlide=0;    //How long has the player been sliding
+    private bool invincible;    //Is the player invincible
+    private int frmsInvin=0;    //How many frames has the player been invincible
+    private int jumps;           //How many jumps does the player have
+    private int frmsSH=3;        //Frame window for shorthopping
     private float moveHorz;     //Horizontal force
     private float moveVert;     //Vertical force
 
     //Buffer tracking
     private int bfrJump = 0;
     private int bfrSH = 0;
+    private int bfrAtk = 0;
+    private int bfrSpec = 0;
+    private int bfrBlock = 0;
+    private int bfrGrab = 0;
 
 	// Use this for initialization
-	void Start () {
-        Application.targetFrameRate = 30;
-
+	void Start ()
+    {
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
 
@@ -47,6 +65,7 @@ public class PlayerController : MonoBehaviour {
         airborn = true;
         fastfall = false;
         slide = false;
+        invincible = false;
         jumps = numAirJumps;
         moveHorz = 0;
         moveVert = 0;
@@ -62,13 +81,13 @@ public class PlayerController : MonoBehaviour {
         //////////////////////////////
         //////MAIN CONTROLLER/////////
         //////////////////////////////
-        if (Input.GetKey("d")) //input move right
+        if (Input.GetKey(ctrlRight)) //input move right
         {
             if (!actable && airborn) {moveHorz = moveSpeed * (aMoveMod / 10);} //Uses forces if airborn and inactible (influences knockback and special fall)
             if (actable && airborn) {transform.position += transform.right * moveSpeed * (aMoveMod / 1000); } //Uses transform if airborn and actable
             if (actable && !airborn) {transform.position += transform.right * moveSpeed * (gMoveMod / 1000);} //Uses transform if grounded
         }
-        if (Input.GetKey("a")) //input move left
+        if (Input.GetKey(ctrlLeft)) //input move left
         {
             if (!actable && airborn) {moveHorz = -moveSpeed * (aMoveMod / 10); } //Uses forces if airborn and inactible (influences knockback and special fall)
             if (actable && airborn) {transform.position -= transform.right * moveSpeed * (aMoveMod / 1000); } //Uses transform if airborn and actable
@@ -82,7 +101,7 @@ public class PlayerController : MonoBehaviour {
             if (bfrJump != 0 && jumps != 0) {Jump(); bfrJump = 0;} 
 
             //input fastfall
-            if (Input.GetKey("s") && !fastfall && airborn && rb.velocity.y <= 0)
+            if (Input.GetKey(ctrlDown) && !fastfall && airborn && rb.velocity.y <= 0)
             {
                 moveVert = -jumpSpeedAirborn * ffMod;
                 fastfall = true;
@@ -106,10 +125,10 @@ public class PlayerController : MonoBehaviour {
         //slide state processing
         if (slide)
         {
-            frmsSliding++;
-            if (rb.velocity.z > 1) {moveHorz -= slideMod / frmsSliding;}
-            else if (moveHorz < -1) {moveHorz += slideMod / frmsSliding;}
-            else {moveHorz = 0; slide = false; frmsSliding = 0;}
+            frmsSlide++;
+            if (rb.velocity.z > 1) {moveHorz -= slideMod / frmsSlide;}
+            else if (moveHorz < -1) {moveHorz += slideMod / frmsSlide;}
+            else {moveHorz = 0; slide = false; frmsSlide = 0;}
         }
     }
 
@@ -120,15 +139,15 @@ public class PlayerController : MonoBehaviour {
         if (bfrJump > 0) {bfrJump--;}
 
         //jump input processing
-        if (Input.GetKeyDown("space"))
+        if (Input.GetKeyDown(ctrlJump))
         {
             bfrSH = 0;
             if (airborn) {bfrJump = inputBuffer;}
         }
         if (!airborn)
         {
-            if (Input.GetKey("space")) {bfrSH++;}
-            if (Input.GetKeyUp("space") && bfrSH <= frmsSH) {bfrJump = inputBuffer;}
+            if (Input.GetKey(ctrlJump)) {bfrSH++;}
+            if (Input.GetKeyUp(ctrlJump) && bfrSH <= frmsSH) {bfrJump = inputBuffer;}
             if (bfrSH > frmsSH) {bfrJump = inputBuffer;}
         }
     }
@@ -155,7 +174,7 @@ public class PlayerController : MonoBehaviour {
     private void OnCollisionEnter(Collision collision)
     {
         //Landing on stage
-        if (collision.gameObject.name == "TopPlane")
+        if (collision.gameObject.name == "TopPlane" || collision.gameObject.name == "Platform")
         {
             jumps = numAirJumps + 1; //resets available jumps to full
             airborn = false;
@@ -173,8 +192,12 @@ public class PlayerController : MonoBehaviour {
 
     private void OnCollisionExit(Collision collision)
     {
-        if(collision.gameObject.name == "Stage") {jumps--;} //uses a jump
-        airborn = true;
-        slide = false;
+        //Eats grounded jump when not grounded
+        if (collision.gameObject.name == "TopPlane" || collision.gameObject.name == "Platform")
+        {
+            jumps--;
+            airborn = true;
+            slide = false;
+        }
     }
 }
