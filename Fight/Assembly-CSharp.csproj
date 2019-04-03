@@ -61,8 +61,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\GameController.cs" />
-    <Compile Include="Assets\Scripts\PlayerController.cs" />
+    <Compile Include="Assets\CollisionStateController.cs" />
+    <Compile Include="Assets\Legacy\LegacyGameController.cs" />
+    <Compile Include="Assets\Legacy\LegacyPlayerController.cs" />
+    <Compile Include="Assets\Scripts\CustomEditor.cs" />
+    <Compile Include="Assets\Scripts\sFightMaster.cs" />
+    <Compile Include="Assets\Scripts\sInput.cs" />
+    <Compile Include="Assets\Scripts\sMechanics.cs" />
+    <Compile Include="Assets\Scripts\sSensor.cs" />
     <Reference Include="Unity.TextMeshPro.Editor">
       <HintPath>C:/Users/berghoc/Desktop/CapstoneFighter/Fight/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
     </Reference>

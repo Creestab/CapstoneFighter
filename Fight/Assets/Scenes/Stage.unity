@@ -843,7 +843,7 @@ MonoBehaviour:
   m_Script: {fileID: 1980459831, guid: f70555f144d8491a825f0804e09c671c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1.4
   m_ReferenceResolution: {x: 800, y: 600}
@@ -1193,7 +1193,6 @@ GameObject:
   - component: {fileID: 2605418026567862596}
   - component: {fileID: 2605418026566896516}
   - component: {fileID: 2605418026564703559}
-  - component: {fileID: 2605418026564703560}
   m_Layer: 0
   m_Name: Blastzone
   m_TagString: Untagged
@@ -1215,45 +1214,6 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 14
   m_Mesh: {fileID: 4300000, guid: 0dd51385945e2bc4ca9b59739724bfff, type: 3}
---- !u!114 &2605418026564703560
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2605418026564703558}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1d8a39c46e2d516408a30ecd69f3daf3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  respawn: 1
-  stockCount: 4
-  player: {fileID: 9044763036549695072, guid: 2e37873737d00264596234528fb282e4, type: 3}
-  p1Spawn: {x: -12, y: 8, z: -2}
-  p1Left: a
-  p1Right: d
-  p1Up: w
-  p1Down: s
-  p1Jump: space
-  p1Atk: m
-  p1Spec: k
-  p1Block: l
-  p1Grab: ;
-  p1Color: {r: 1, g: 0, b: 0, a: 1}
-  p1Name: Player 1
-  p2Spawn: {x: 12, y: 7.5, z: 2}
-  p2Left: left
-  p2Right: right
-  p2Up: up
-  p2Down: down
-  p2Jump: right ctrl
-  p2Atk: m
-  p2Spec: k
-  p2Block: l
-  p2Grab: ;
-  p2Color: {r: 0, g: 0, b: 1, a: 1}
-  p2Name: Player 2
 --- !u!4 &2605418026564995430
 Transform:
   m_ObjectHideFlags: 0
