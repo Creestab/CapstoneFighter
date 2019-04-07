@@ -27,6 +27,7 @@ public class sMechanics : MonoBehaviour
 
     public enum enumAttacks
     {
+        none,
         jab,
         uTilt,
         fTilt,

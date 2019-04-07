@@ -6,7 +6,8 @@ public class sInput : MonoBehaviour
 {
     [SerializeField] sMechanics sMech;
 
-    public KeyCode moveRight;
+    public KeyCode iMoveRight;
+    public KeyCode iTilt;
 
     // Start is called before the first frame update
     void Start()
@@ -17,7 +18,14 @@ public class sInput : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetKeyDown(moveRight))
+        //Tilt action
+        if (Input.GetKeyDown(iTilt))
+        {
+            if (Input.GetKey(iMoveRight))   { sMech.GetCharAnimator.SetTrigger("TiltRight"); }
+            else                            { sMech.GetCharAnimator.SetTrigger("Jab"); }
+        }
+        //No action inputs
+        else if (Input.GetKeyDown(iMoveRight))
         {
             sMech.GetCharAnimator.SetTrigger("WalkRight");
         }
