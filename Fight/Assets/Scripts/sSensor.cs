@@ -27,12 +27,14 @@ public class sSensor : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (_instance != PHitCollider.NoCol)
+        if (other.GetComponent<sSensor>().GetPHitCollider == PHitCollider.HitCol)
         {
             var tempScript = other.GetComponent<sSensor>();
             if (_parent != tempScript.GetParent)
             {
+                Debug.Log(_parent.name);
                 Debug.Log(other.name);
+                Debug.Log(this.name);
             }
         }
     }

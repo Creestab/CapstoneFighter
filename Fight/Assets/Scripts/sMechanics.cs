@@ -14,16 +14,9 @@ public class PlayerSensorData
 
 public class sMechanics : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
     [SerializeField] float _value;
     [SerializeField] Animator _anim;
-
-    List<PlayerSensorData> _pSensors;
+    [SerializeField]List<PlayerSensorData> _pSensors;
 
     public enum enumAttacks
     {
@@ -46,6 +39,12 @@ public class sMechanics : MonoBehaviour
         dThrow,
         bThrow,
         getupAtk
+    }
+
+    // Start is called before the first frame update
+    void Start()
+    {
+
     }
 
     public float GetSliderVal
