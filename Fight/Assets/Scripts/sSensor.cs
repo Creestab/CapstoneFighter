@@ -4,30 +4,33 @@ using UnityEngine;
 
 public class sSensor : MonoBehaviour
 {
-    public enum PHitCollider
+    public enum ColliderState
     {
-        NoCol,
-        BodyCol,
-        HitCol
+        None,
+        HitBox,
+        HurtBox
     };
 
-    void Start(){}
-
-    [SerializeField] PHitCollider _instance;
-    [SerializeField] Transform _parent;
-    public PHitCollider GetPHitCollider
+    void Start()
     {
-        get { return _instance;}
+
+    }
+
+    [SerializeField] ColliderState _instance;
+    [SerializeField] Transform _parent;
+    public ColliderState GetColliderState
+    {
+        get { return _instance; }
         set { _instance = value; }
     }
     public Transform GetParent
     {
-        get {return _parent;}
+        get { return _parent; }
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.GetComponent<sSensor>().GetPHitCollider == PHitCollider.HitCol)
+        if (other.GetComponent<sSensor>().GetColliderState == ColliderState.HitBox)
         {
             var tempScript = other.GetComponent<sSensor>();
             if (_parent != tempScript.GetParent)

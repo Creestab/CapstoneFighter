@@ -61,13 +61,17 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Legacy\LegacyGameController.cs" />
-    <Compile Include="Assets\Legacy\LegacyPlayerController.cs" />
-    <Compile Include="Assets\Scripts\CollisionStateController.cs" />
-    <Compile Include="Assets\Scripts\CustomEditor.cs" />
-    <Compile Include="Assets\Scripts\sFightMaster.cs" />
+    <Compile Include="Assets\Legacy\GorillaTutorial\LCustomEditor.cs" />
+    <Compile Include="Assets\Legacy\GorillaTutorial\LFightMaster.cs" />
+    <Compile Include="Assets\Legacy\GorillaTutorial\LInput.cs" />
+    <Compile Include="Assets\Legacy\GorillaTutorial\LMechanics.cs" />
+    <Compile Include="Assets\Legacy\GorillaTutorial\LSensor.cs" />
+    <Compile Include="Assets\Legacy\LGameController.cs" />
+    <Compile Include="Assets\Legacy\LPlayerController.cs" />
+    <Compile Include="Assets\Scripts\sCollisionStateController.cs" />
     <Compile Include="Assets\Scripts\sInput.cs" />
-    <Compile Include="Assets\Scripts\sMechanics.cs" />
+    <Compile Include="Assets\Scripts\sMoveData.cs" />
+    <Compile Include="Assets\Scripts\sPlayer.cs" />
     <Compile Include="Assets\Scripts\sSensor.cs" />
     <Reference Include="Unity.TextMeshPro.Editor">
       <HintPath>C:/Users/berghoc/Desktop/CapstoneFighter/Fight/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class sInput : MonoBehaviour
 {
-    [SerializeField] sMechanics sMech;
+    [SerializeField] sPlayer sMech;
 
     public KeyCode iJump;
     public KeyCode iMoveRight;
@@ -13,7 +13,7 @@ public class sInput : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        sMech = this.GetComponent<sMechanics>();
+        sMech = this.GetComponent<sPlayer>();
     }
 
     // Update is called once per frame
