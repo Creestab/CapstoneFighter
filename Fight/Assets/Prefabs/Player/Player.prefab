@@ -1110,12 +1110,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 9044763036549695072}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6928285100899ee49994ea29189a27a3, type: 3}
+  m_Script: {fileID: 11500000, guid: 2362342b5256de647b029789059776ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _value: 0
   _anim: {fileID: 5975999388802473011}
-  _pSensors:
+  _sensors:
   - _sensors: {fileID: 4500759357559119383}
     _atkColliders: 1
 --- !u!114 &5562589085949743872
@@ -1127,13 +1126,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 9044763036549695072}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4010bad746167bc48b94d8d76f3ff45c, type: 3}
+  m_Script: {fileID: 11500000, guid: b7a9ff59200488d43b9b17af1aebde9f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sMech: {fileID: 7369548044506996763}
-  iJump: 0
-  iMoveRight: 0
-  iTilt: 0
+  pControl: {fileID: 7369548044506996763}
+  iJump: 32
+  iMoveRight: 100
+  iTilt: 44
 --- !u!1001 &266963156745418368
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2338,7 +2337,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a9b824de0ceb717419341a8efde02b71, type: 3}
+  m_Script: {fileID: 11500000, guid: fd3a1463e83ced94688a7a1d78ea5604, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1001 &4582387794914306152

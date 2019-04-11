@@ -14,7 +14,6 @@ public class PlayerSensorData
 
 public class sPlayer : MonoBehaviour
 {
-    [SerializeField] float _value;
     [SerializeField] Animator _anim;
     [SerializeField] List<PlayerSensorData> _sensors;
     [SerializeField] Dictionary<enumMoves, MoveData> _moves;
