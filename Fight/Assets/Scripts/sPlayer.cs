@@ -18,6 +18,8 @@ public class sPlayer : MonoBehaviour
     [SerializeField] List<PlayerSensorData> _sensors;
     [SerializeField] Dictionary<enumMoves, MoveData> _moves;
 
+    public int pNumber;
+
     // Start is called before the first frame update
     void Start()
     {
