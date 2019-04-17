@@ -19,6 +19,8 @@ public class sPlayer : MonoBehaviour
     [SerializeField] Dictionary<enumMoves, MoveData> _moves;
 
     public int pNumber;
+    public int orientation; //1 for facing right, -1 for facing left.
+    public bool airborne;
 
     // Start is called before the first frame update
     void Start()
@@ -48,17 +50,24 @@ public class sPlayer : MonoBehaviour
         uStrong,
         fStrong,
         dStrong,
+        nAir,
         uAir,
         fAir,
         dAir,
         bAir,
+        nSpec,
+        uSpec,
+        fSpec,
+        dSpec,
         grab,
         pummel,
         uThrow,
         fThrow,
         dThrow,
         bThrow,
-        getupAtk
+        getupAtk,
+        fRoll,
+        bRoll
     }
 
     public Animator GetCharAnimator { get { return _anim; } }

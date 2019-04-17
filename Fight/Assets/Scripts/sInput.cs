@@ -5,69 +5,36 @@ using XInputDotNetPure;
 
 public class sInput : MonoBehaviour
 {
-    public enum ControllerType { Keyboard, GameCube, XBox };
     public enum InputAction { Move, Light, Heavy, Special, Block, Grab, Jump, Alt, Pause };
-
-    public struct ControlMapVJoy
+    public struct ControlScheme
     {
+        public int buffer;
         public string moveHorz;
         public string moveVert;
-        public InputAction rStick;
-        public KeyCode lightAtk;
-        public KeyCode heavyAtk;
+        public KeyCode left;
+        public KeyCode right;
+        public KeyCode up;
+        public KeyCode down;
+        public KeyCode light;
+        public KeyCode heavy;
+        public float lightToHeavy; //Threshold for light attack inputs to register as heavy. Values over 1 disable this.
         public KeyCode special;
         public KeyCode block;
         public KeyCode grab;
         public KeyCode jump;
         public KeyCode alt;
         public KeyCode pause;
-
-        public ControlMapVJoy(sPlayer p) //default controls
-        {
-            if (p.pNumber == 1)
-            {
-                moveHorz = "P1_LHorz";
-                moveVert = "P1_LVert";
-                rStick = InputAction.Heavy;
-                lightAtk = KeyCode.Joystick1Button0;
-                heavyAtk = KeyCode.Joystick1Button2;
-                special = KeyCode.Joystick1Button1;
-                block = KeyCode.Joystick1Button6;
-                grab = KeyCode.Joystick1Button4;
-                jump = KeyCode.Joystick1Button3;
-                alt = KeyCode.Joystick1Button5;
-                pause = KeyCode.Joystick1Button7;
-            }
-            else
-            {
-                moveHorz = "P2_LHorz";
-                moveVert = "P2_LVert";
-                rStick = InputAction.Heavy;
-                lightAtk = KeyCode.Joystick2Button0;
-                heavyAtk = KeyCode.Joystick2Button2;
-                special = KeyCode.Joystick2Button1;
-                block = KeyCode.Joystick2Button6;
-                grab = KeyCode.Joystick2Button4;
-                jump = KeyCode.Joystick2Button3;
-                alt = KeyCode.Joystick2Button5;
-                pause = KeyCode.Joystick2Button7;
-            }
-        }
     }
-    /*public struct ControlMapXInput
-    {
-    }
-    public struct ControlMapKeyboard
-    {
-    }*/
 
     sPlayer pChar;
-    [SerializeField] ControllerType device;
-    ControlMapVJoy controls;
+    ControlScheme controls;
 
-    List<KeyCode> inputs;
-    int buffer;
-    static int InputBuffer = 6;
+    bool actable;
+    int stun;
+
+    sPlayer.enumMoves qInput;
+    int xBuf;
+    bool forceHeavy;
 
     // Start is called before the first frame update
     void Start()
@@ -75,16 +42,119 @@ public class sInput : MonoBehaviour
         Application.targetFrameRate = 60;
 
         pChar = transform.parent.GetComponent<sPlayer>();
-        controls = new ControlMapVJoy(pChar);
 
-        inputs = new List<KeyCode>();
-        buffer = 0;
+        qInput = sPlayer.enumMoves.none;
+        xBuf = 0;
+        forceHeavy = false;
     }
 
     private void FixedUpdate()
     {
 
+        if (xBuf == 0) { qInput = sPlayer.enumMoves.none; } else if (xBuf > 0) { xBuf--; }
 
+        if (!actable)
+        {
+            //Is the player facing right?
+            if (pChar.orientation == 1)
+            {
+                //Is the player on the ground?
+                if (!pChar.airborne)
+                {
+                    //Is the player inputting a light attack?
+                    if (Input.GetKeyDown(controls.light))
+                    {
+                        //Is it a shield grab?
+                        if (Input.GetKey(controls.block)) { qInput = sPlayer.enumMoves.grab; }
+                        //Is it a below the heavy attack threshold?
+                        else if (Input.GetAxis(controls.moveHorz) < controls.lightToHeavy && Input.GetAxis(controls.moveVert) < controls.lightToHeavy)
+                        {
+                            //Is it not a jab?
+                            if (Input.GetAxis(controls.moveHorz) != 0 || Input.GetAxis(controls.moveVert) != 0)
+                            {
+                                //What type of tilt?
+                                if (Mathf.Abs(Input.GetAxis(controls.moveHorz)) > Mathf.Abs(Input.GetAxis(controls.moveVert)))
+                                {
+                                    //Forward Tilt
+                                    if (Input.GetAxis(controls.moveHorz) > 0) { qInput = sPlayer.enumMoves.fTilt; }
+                                    //Pivot Forward Tilt
+                                    else
+                                    {
+                                        pChar.orientation = -pChar.orientation;
+                                        qInput = sPlayer.enumMoves.fTilt;
+                                    }
+                                }
+                                else
+                                {
+                                    //Up Tilt
+                                    if (Input.GetAxis(controls.moveVert) > 0) { qInput = sPlayer.enumMoves.uTilt; }
+                                    //Down Tilt
+                                    else { qInput = sPlayer.enumMoves.dTilt; }
+                                }
+                            }
+                            else //Its a jab
+                            {
+                                qInput = sPlayer.enumMoves.jab;
+                            }
+                        }
+                        else
+                        {
+                            forceHeavy = true;
+                        }
+                    }
+                    //Is the player inputting a roll?
+                    else if (Input.GetKeyDown(controls.block))
+                    {
+                        //Roll right
+                        if (Input.GetAxis(controls.moveHorz) > .5) { qInput = sPlayer.enumMoves.fRoll; }
+                        //Roll left
+                        if (Input.GetAxis(controls.moveHorz) < -.5) { qInput = sPlayer.enumMoves.bRoll; }
+                    }
+                    //Is the player inputting a special?
+                    else if (Input.GetKeyDown(controls.special))
+                    {
+                        //Is it not a neutral special?
+                        if (Input.GetAxis(controls.moveHorz) != 0 || Input.GetAxis(controls.moveVert) != 0)
+                        {
+                            //What type of special?
+                            if (Mathf.Abs(Input.GetAxis(controls.moveHorz)) > Mathf.Abs(Input.GetAxis(controls.moveVert)))
+                            {
+                                //Forward special
+                                if (Input.GetAxis(controls.moveHorz) > 0) { qInput = sPlayer.enumMoves.fSpec; }
+                                //Pivot Forward special
+                                else
+                                {
+                                    pChar.orientation = -pChar.orientation;
+                                    qInput = sPlayer.enumMoves.fSpec;
+                                }
+                            }
+                            else
+                            {
+                                //Up special
+                                if (Input.GetAxis(controls.moveVert) > 0) { qInput = sPlayer.enumMoves.uSpec; }
+                                //Down special
+                                else { qInput = sPlayer.enumMoves.dSpec; }
+                            }
+                        }
+                        else //Its a neutral special
+                        {
+                            qInput = sPlayer.enumMoves.nSpec;
+                        }
+                    }
+                    else if (forceHeavy || Input.GetKeyDown(controls.heavy))
+                    {
+
+                    }
+                    else if (Input.GetKeyDown(controls.grab)) { }
+                    else if (Input.GetKeyDown(controls.jump)) { }
+                }
+                //The player is airborne
+                else
+                {
+
+                }
+            }
+        }
     }
 
     // Update is called once per frame
@@ -105,7 +175,7 @@ public class sInput : MonoBehaviour
                 }
             }
             //Tilt action
-            else if (Input.GetKeyDown(controls.lightAtk))
+            else if (Input.GetKeyDown(controls.light))
             {
                 if (Input.GetAxis(controls.moveHorz) <.7) { pChar.GetCharAnimator.Play("TiltRight"); }
                 else { pChar.GetCharAnimator.Play("Jab"); }
