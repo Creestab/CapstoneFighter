@@ -43,10 +43,11 @@ public class sPlayer : MonoBehaviour
     public enum enumMoves
     {
         none,
+        jump,
         jab,
-        uTilt,
-        fTilt,
-        dTilt,
+        uLight,
+        fLight,
+        dLight,
         uStrong,
         fStrong,
         dStrong,
@@ -65,9 +66,13 @@ public class sPlayer : MonoBehaviour
         fThrow,
         dThrow,
         bThrow,
+        getup,
         getupAtk,
+        shield,
         fRoll,
-        bRoll
+        bRoll,
+        dodge,
+        airdodge
     }
 
     public Animator GetCharAnimator { get { return _anim; } }
