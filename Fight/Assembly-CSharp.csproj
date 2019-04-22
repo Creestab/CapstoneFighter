@@ -76,6 +76,7 @@
     <Compile Include="Assets\Scripts\sSensor.cs" />
     <Compile Include="Assets\XInputDotNet\Examples\XInputTestCS.cs" />
     <None Include="Assets\XInputDotNet\Docs.txt" />
+    <None Include="Assets\Text\Keyboard_Default.txt" />
     <None Include="Assets\XInputDotNet\MITLicense.txt" />
     <Reference Include="Unity.TextMeshPro.Editor">
       <HintPath>C:/Users/berghoc/Desktop/CapstoneFighter/Fight/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>

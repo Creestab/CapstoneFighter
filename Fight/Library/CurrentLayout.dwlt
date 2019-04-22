@@ -73,7 +73,7 @@ MonoBehaviour:
   m_MinSize: {x: 277, y: 198}
   m_MaxSize: {x: 4002, y: 8048}
   vertical: 1
-  controlID: 106
+  controlID: 166
 --- !u!114 &4
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -166,7 +166,7 @@ MonoBehaviour:
   m_MinSize: {x: 713, y: 498}
   m_MaxSize: {x: 18008, y: 14048}
   vertical: 0
-  controlID: 82
+  controlID: 62
 --- !u!114 &8
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -191,7 +191,7 @@ MonoBehaviour:
   m_MinSize: {x: 232, y: 498}
   m_MaxSize: {x: 10002, y: 14048}
   vertical: 1
-  controlID: 163
+  controlID: 142
 --- !u!114 &9
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -268,7 +268,7 @@ MonoBehaviour:
   m_MinSize: {x: 204, y: 348}
   m_MaxSize: {x: 4004, y: 8048}
   vertical: 1
-  controlID: 83
+  controlID: 63
 --- !u!114 &12
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -342,8 +342,8 @@ MonoBehaviour:
     y: 0
     width: 403
     height: 983
-  m_MinSize: {x: 277, y: 74}
-  m_MaxSize: {x: 4002, y: 4024}
+  m_MinSize: {x: 275, y: 50}
+  m_MaxSize: {x: 4000, y: 4000}
   m_ActualView: {fileID: 23}
   m_Panes:
   - {fileID: 23}
@@ -466,11 +466,11 @@ MonoBehaviour:
     - e00: 0.5253789
       e01: 0
       e02: 0
-      e03: 270.72327
+      e03: 271.49298
       e10: 0
       e11: 0.5253789
       e12: 0
-      e13: 8.076322
+      e13: 8.076324
       e20: 0
       e21: 0
       e22: 1
@@ -606,9 +606,9 @@ MonoBehaviour:
   m_SceneHierarchy:
     m_TreeViewState:
       scrollPos: {x: 0, y: 0}
-      m_SelectedIDs: 6c2a0000
+      m_SelectedIDs: 702a0000
       m_LastClickedID: 0
-      m_ExpandedIDs: d4fbffff
+      m_ExpandedIDs: 9cfaffffd2fbffffd4fbffff
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -670,20 +670,20 @@ MonoBehaviour:
     m_ShowAllHits: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/Prefabs/Player
+    - Assets/Text
   m_ViewMode: 1
   m_StartGridSize: 96
   m_LastFolders:
-  - Assets/Prefabs/Player
+  - Assets/Text
   m_LastFoldersGridSize: 96
   m_LastProjectPath: C:\Users\berghoc\Desktop\CapstoneFighter\Fight
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
     scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: 20270000
-    m_LastClickedID: 10016
-    m_ExpandedIDs: 0000000026260000c42600002e28000032280000c02a0000c22a0000c42a000000ca9a3b
+    m_SelectedIDs: 142b0000
+    m_LastClickedID: 11028
+    m_ExpandedIDs: 0000000026260000c42600002e28000032280000cc2a0000ce2a0000d02a000000ca9a3b
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -711,7 +711,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 0000000026260000c42600002e280000c02a0000c22a0000c42a0000
+    m_ExpandedIDs: 0000000026260000c42600002e28000032280000cc2a0000ce2a0000d02a0000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 

@@ -35,9 +35,9 @@ public class sSensor : MonoBehaviour
             var tempScript = other.GetComponent<sSensor>();
             if (_parent != tempScript.GetParent)
             {
-                Debug.Log(_parent.name);
+                /*Debug.Log(_parent.name);
                 Debug.Log(other.name);
-                Debug.Log(this.name);
+                Debug.Log(this.name);*/
             }
         }
     }

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.IO;
 using XInputDotNetPure;
 
 public class sInput : MonoBehaviour
@@ -39,24 +40,42 @@ public class sInput : MonoBehaviour
     int xBuf;
     bool forceHeavy;
 
+    int debugFramesFixed;
+    int debugFrames;
+
     // Start is called before the first frame update
     void Start()
     {
         Application.targetFrameRate = 60;
 
-        pChar = transform.parent.GetComponent<sPlayer>();
+        pChar = GetComponent<sPlayer>();
+        controls = new ControlScheme();
+        setControls(pChar.ctrlProfile);
+
+        actable = true;
+        stun = 0;
 
         qInput = sPlayer.enumMoves.none;
         xBuf = 0;
         forceHeavy = false;
+
+        Debug.Log(debugFramesFixed = 0);
+        Debug.Log(debugFrames = 0);
     }
 
     private void FixedUpdate()
     {
+        debugFramesFixed++;
+
         //Clear buffered actions
         if (qInput != sPlayer.enumMoves.none)
         {
-            if (xBuf == 0) { qInput = sPlayer.enumMoves.none; } else { xBuf--; }
+            if (xBuf == 0)
+            {
+                qInput = sPlayer.enumMoves.none;
+                //Debug.Log("Queued move expired" + "   Fixed Update #" + debugFramesFixed);
+            }
+            else { xBuf--; }
         }
         sPlayer.enumMoves qTemp = qInput;
         
@@ -68,7 +87,7 @@ public class sInput : MonoBehaviour
         if (pChar.orientation == 1)
         {
             //Is the player on the ground?
-            if (!pChar.airborne)
+            if (!pChar.isAirborne())
             {
                 //Is the player inputting a light attack?
                 if (Input.GetKeyDown(controls.light) || (controls.rStickUse == InputAction.Light && (Input.GetAxis(controls.rHorz) != 0 || Input.GetAxis(controls.rVert) != 0)))
@@ -330,7 +349,7 @@ public class sInput : MonoBehaviour
         else
         {
             //Is the player on the ground?
-            if (!pChar.airborne)
+            if (!pChar.isAirborne())
             {
                 //Is the player inputting a light attack?
                 if (Input.GetKeyDown(controls.light) || (controls.rStickUse == InputAction.Light && (Input.GetAxis(controls.rHorz) != 0 || Input.GetAxis(controls.rVert) != 0)))
@@ -590,31 +609,43 @@ public class sInput : MonoBehaviour
         }
 
         //Start frame buffer on a new input
-        if (qInput != qTemp) { xBuf = 6; }
+        if (qInput != qTemp)
+        {
+            xBuf = controls.buffer;
+            //Debug.Log("Input received: " + qInput + "   Fixed Update #" + debugFramesFixed);
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
+        debugFrames++;
+
+        if (pChar.GetCharAnimator.GetCurrentAnimatorStateInfo(0).IsName("Idle") || pChar.GetCharAnimator.GetCurrentAnimatorStateInfo(0).IsName("Running"))
+        {
+            actable = true;
+            if (pChar.isAirborne()) { pChar.modAirborne(); }
+        }
+        else if (pChar.GetCharAnimator.GetCurrentAnimatorStateInfo(0).IsName("Idle"))
+        {
+            actable = true;
+            if(!pChar.isAirborne()) { pChar.modAirborne(); }
+        }
+        else
+        {
+            actable = false;
+        }
+
         //Action processing
         if (actable)
         {
             //Queued input from buffer
             if (qInput != sPlayer.enumMoves.none)
             {
-                //Verify actable grounded state
-                if (pChar.GetCharAnimator.GetCurrentAnimatorStateInfo(0).IsName("Idle") || pChar.GetCharAnimator.GetCurrentAnimatorStateInfo(0).IsName("Running"))
-                {
-                    //Possible actions
-                    if (qInput == sPlayer.enumMoves.jab) { pChar.GetCharAnimator.Play("Jab"); }
-                }
-                //Verify actable aerial state
-                else if (pChar.GetCharAnimator.GetCurrentAnimatorStateInfo(0).IsName("Airborne"))
-                {
+                //Debug.Log("Action pulled from buffer: " + qInput + "   Update #" + debugFrames);
 
-                }
-                //Character deemed unactable due to error
-                else { actable = false; }
+                //Possible actions
+                 if (qInput == sPlayer.enumMoves.jab) { pChar.GetCharAnimator.Play("Jab"); }
 
                 //Buffered action executed
                 qInput = sPlayer.enumMoves.none;
@@ -681,5 +712,29 @@ public class sInput : MonoBehaviour
         controls.jump = j;
         controls.alt = a;
         controls.pause = p;
-}
+    }
+    public void setControls(TextAsset prf)
+    {
+        StreamReader reader = new StreamReader("Assets/Text/" + prf.name + ".txt");
+
+        controls.buffer = int.Parse(reader.ReadLine().Split(new char[] {' '}, 2, System.StringSplitOptions.None)[1]);
+        controls.moveHorz = reader.ReadLine().Split(new char[] { ' ' }, 2, System.StringSplitOptions.None)[1];
+        controls.moveVert = reader.ReadLine().Split(new char[] { ' ' }, 2, System.StringSplitOptions.None)[1];
+        controls.rStickUse = (InputAction)System.Enum.Parse( typeof(InputAction), reader.ReadLine().Split(new char[] { ' ' }, 2, System.StringSplitOptions.None)[1]);
+        controls.rHorz = reader.ReadLine().Split(new char[] { ' ' }, 2, System.StringSplitOptions.None)[1];
+        controls.rVert = reader.ReadLine().Split(new char[] { ' ' }, 2, System.StringSplitOptions.None)[1];
+        controls.left = (KeyCode)System.Enum.Parse(typeof(KeyCode), reader.ReadLine().Split(new char[] { ' ' }, 2, System.StringSplitOptions.None)[1]);
+        controls.right = (KeyCode)System.Enum.Parse(typeof(KeyCode), reader.ReadLine().Split(new char[] { ' ' }, 2, System.StringSplitOptions.None)[1]);
+        controls.up = (KeyCode)System.Enum.Parse(typeof(KeyCode), reader.ReadLine().Split(new char[] { ' ' }, 2, System.StringSplitOptions.None)[1]);
+        controls.down = (KeyCode)System.Enum.Parse(typeof(KeyCode), reader.ReadLine().Split(new char[] { ' ' }, 2, System.StringSplitOptions.None)[1]);
+        controls.light = (KeyCode)System.Enum.Parse(typeof(KeyCode), reader.ReadLine().Split(new char[] { ' ' }, 2, System.StringSplitOptions.None)[1]);
+        controls.heavy = (KeyCode)System.Enum.Parse(typeof(KeyCode), reader.ReadLine().Split(new char[] { ' ' }, 2, System.StringSplitOptions.None)[1]);
+        controls.lightToHeavy = float.Parse(reader.ReadLine().Split(new char[] { ' ' }, 2, System.StringSplitOptions.None)[1]);
+        controls.special = (KeyCode)System.Enum.Parse(typeof(KeyCode), reader.ReadLine().Split(new char[] { ' ' }, 2, System.StringSplitOptions.None)[1]);
+        controls.block = (KeyCode)System.Enum.Parse(typeof(KeyCode), reader.ReadLine().Split(new char[] { ' ' }, 2, System.StringSplitOptions.None)[1]);
+        controls.grab = (KeyCode)System.Enum.Parse(typeof(KeyCode), reader.ReadLine().Split(new char[] { ' ' }, 2, System.StringSplitOptions.None)[1]);
+        controls.jump = (KeyCode)System.Enum.Parse(typeof(KeyCode), reader.ReadLine().Split(new char[] { ' ' }, 2, System.StringSplitOptions.None)[1]);
+        controls.alt = (KeyCode)System.Enum.Parse(typeof(KeyCode), reader.ReadLine().Split(new char[] { ' ' }, 2, System.StringSplitOptions.None)[1]);
+        controls.pause = (KeyCode)System.Enum.Parse(typeof(KeyCode), reader.ReadLine().Split(new char[] { ' ' }, 2, System.StringSplitOptions.None)[1]);
+    }
 }

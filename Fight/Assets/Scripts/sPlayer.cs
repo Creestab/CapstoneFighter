@@ -18,14 +18,15 @@ public class sPlayer : MonoBehaviour
     [SerializeField] List<PlayerSensorData> _sensors;
     [SerializeField] Dictionary<enumMoves, MoveData> _moves;
 
+    public TextAsset ctrlProfile;
     public int pNumber;
     public int orientation; //1 for facing right, -1 for facing left.
-    public bool airborne;
+    bool airborne;
 
     // Start is called before the first frame update
     void Start()
     {
-
+        airborne = true;
     }
     public struct MoveData
     {
@@ -78,4 +79,13 @@ public class sPlayer : MonoBehaviour
     public Animator GetCharAnimator { get { return _anim; } }
     public List<PlayerSensorData> GetPlayerSensors { get { return _sensors; } }
     public Dictionary<enumMoves, MoveData> GetPlayerMoves {  get { return _moves; } }
+
+    public bool isAirborne()
+    {
+        return airborne;
+    }
+    public void modAirborne()
+    {
+        airborne = !airborne;
+    }
 }
