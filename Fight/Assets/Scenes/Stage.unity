@@ -1193,6 +1193,7 @@ GameObject:
   - component: {fileID: 2605418026567862596}
   - component: {fileID: 2605418026566896516}
   - component: {fileID: 2605418026564703559}
+  - component: {fileID: 2605418026564703560}
   m_Layer: 0
   m_Name: Blastzone
   m_TagString: Untagged
@@ -1214,6 +1215,20 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 14
   m_Mesh: {fileID: 4300000, guid: 0dd51385945e2bc4ca9b59739724bfff, type: 3}
+--- !u!114 &2605418026564703560
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2605418026564703558}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4217e17ee519f3e4cafb23f85c6c922c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tRespawn: 0
+  maxStocks: 0
 --- !u!4 &2605418026564995430
 Transform:
   m_ObjectHideFlags: 0

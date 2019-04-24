@@ -18,16 +18,42 @@ public class sPlayer : MonoBehaviour
     [SerializeField] List<PlayerSensorData> _sensors;
     [SerializeField] Dictionary<enumMoves, MoveData> _moves;
 
+    public GameObject pChar;
     public TextAsset ctrlProfile;
+
     public int pNumber;
     public int orientation; //1 for facing right, -1 for facing left.
     bool airborne;
+    bool fastfall;
+    public static int maxJumps;
+    int jumps;
+
+    float mHorz;
+    float mVert;
 
     // Start is called before the first frame update
     void Start()
     {
         airborne = true;
+        fastfall = false;
+        jumps = maxJumps - 1;
+
+        mVert = 0;
+        mHorz = 0;
     }
+
+    private void Update()
+    {
+        if(orientation == 1)
+        {
+            gameObject.transform.eulerAngles = new Vector3(0f, 0f, 0f);
+        }
+        else if(orientation == -1)
+        {
+            gameObject.transform.eulerAngles = new Vector3(0f, 180f, 0f);
+        }
+    }
+
     public struct MoveData
     {
         public enumMoves moveSlot;

@@ -46,8 +46,6 @@ public class sInput : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Application.targetFrameRate = 60;
-
         pChar = GetComponent<sPlayer>();
         controls = new ControlScheme();
         setControls(pChar.ctrlProfile);
@@ -73,7 +71,7 @@ public class sInput : MonoBehaviour
             if (xBuf == 0)
             {
                 qInput = sPlayer.enumMoves.none;
-                //Debug.Log("Queued move expired" + "   Fixed Update #" + debugFramesFixed);
+                Debug.Log("Queued move expired" + "   Fixed Update #" + debugFramesFixed);
             }
             else { xBuf--; }
         }
@@ -612,7 +610,7 @@ public class sInput : MonoBehaviour
         if (qInput != qTemp)
         {
             xBuf = controls.buffer;
-            //Debug.Log("Input received: " + qInput + "   Fixed Update #" + debugFramesFixed);
+            Debug.Log("Input received: " + qInput + "   Fixed Update #" + debugFramesFixed);
         }
     }
 
@@ -626,7 +624,7 @@ public class sInput : MonoBehaviour
             actable = true;
             if (pChar.isAirborne()) { pChar.modAirborne(); }
         }
-        else if (pChar.GetCharAnimator.GetCurrentAnimatorStateInfo(0).IsName("Idle"))
+        else if (pChar.GetCharAnimator.GetCurrentAnimatorStateInfo(0).IsName("Airborne"))
         {
             actable = true;
             if(!pChar.isAirborne()) { pChar.modAirborne(); }
@@ -642,10 +640,16 @@ public class sInput : MonoBehaviour
             //Queued input from buffer
             if (qInput != sPlayer.enumMoves.none)
             {
-                //Debug.Log("Action pulled from buffer: " + qInput + "   Update #" + debugFrames);
+                Debug.Log("Action pulled from buffer: " + qInput + "   Update #" + debugFrames);
 
-                //Possible actions
-                 if (qInput == sPlayer.enumMoves.jab) { pChar.GetCharAnimator.Play("Jab"); }
+                ////////////////////
+                //Possible actions//
+                ////////////////////
+                //Jump
+                if (qInput == sPlayer.enumMoves.jump && !pChar.isAirborne()) { pChar.GetCharAnimator.Play("JumpSquat"); }
+                else if (qInput == sPlayer.enumMoves.jump) { pChar.GetCharAnimator.Play("AirJump"); }
+                //Jab
+                if (qInput == sPlayer.enumMoves.jab) { pChar.GetCharAnimator.Play("Jab"); }
 
                 //Buffered action executed
                 qInput = sPlayer.enumMoves.none;
@@ -654,7 +658,27 @@ public class sInput : MonoBehaviour
             //Process non-bufferable actions (like movement)
             else
             {
+                //Key movement
+                if (Input.GetKey(controls.down))
+                {
+                    pChar.GetCharAnimator.Play("Crouching");
+                }
+                else if (Input.GetKey(controls.right))
+                {
+                    pChar.orientation = 1;
+                    pChar.GetCharAnimator.Play("Running");
+                }
+                else if (Input.GetKey(controls.left))
+                {
+                    pChar.orientation = -1;
+                    pChar.GetCharAnimator.Play("Running");
+                }
+                //Analog Movement
+                else if (Input.GetAxis(controls.moveHorz) != 0 && Input.GetAxis(controls.moveVert) != 0)
+                {
 
+                }
+                else { pChar.GetCharAnimator.Play("Idle"); }
             }
         }
         //Process influence to inactable states (DI, special fall drift, mashing, ext.)
