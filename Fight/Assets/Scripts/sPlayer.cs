@@ -171,4 +171,8 @@ public class sPlayer : MonoBehaviour
     {
         holdingPlayer = !holdingPlayer;
     }
+    public void modOrientation()
+    {
+        orientation = -orientation;
+    }
 }

@@ -63,13 +63,6 @@
   <ItemGroup>
     <Compile Include="Assets\GamePadInput\Demo\DemoScript.cs" />
     <Compile Include="Assets\GamePadInput\GamePad.cs" />
-    <Compile Include="Assets\Legacy\GorillaTutorial\LCustomEditor.cs" />
-    <Compile Include="Assets\Legacy\GorillaTutorial\LFightMaster.cs" />
-    <Compile Include="Assets\Legacy\GorillaTutorial\LInput.cs" />
-    <Compile Include="Assets\Legacy\GorillaTutorial\LMechanics.cs" />
-    <Compile Include="Assets\Legacy\GorillaTutorial\LSensor.cs" />
-    <Compile Include="Assets\Legacy\LGameController.cs" />
-    <Compile Include="Assets\Legacy\LPlayerController.cs" />
     <Compile Include="Assets\Scripts\sBattleDriver.cs" />
     <Compile Include="Assets\Scripts\sCollisionStateController.cs" />
     <Compile Include="Assets\Scripts\sGameDriver.cs" />

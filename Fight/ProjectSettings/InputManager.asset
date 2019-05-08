@@ -13,61 +13,13 @@ InputManager:
     positiveButton: 
     altNegativeButton: 
     altPositiveButton: 
-    gravity: 0
-    dead: 0.05
-    sensitivity: 0
+    gravity: 1
+    dead: 0.2
+    sensitivity: 1.3
     snap: 0
     invert: 0
     type: 2
     axis: 0
-    joyNum: 1
-  - serializedVersion: 3
-    m_Name: P1_LVert
-    descriptiveName: 
-    descriptiveNegativeName: 
-    negativeButton: 
-    positiveButton: 
-    altNegativeButton: 
-    altPositiveButton: 
-    gravity: 0
-    dead: 0.05
-    sensitivity: 0
-    snap: 0
-    invert: 0
-    type: 2
-    axis: 1
-    joyNum: 1
-  - serializedVersion: 3
-    m_Name: P1_RHorz
-    descriptiveName: 
-    descriptiveNegativeName: 
-    negativeButton: 
-    positiveButton: 
-    altNegativeButton: 
-    altPositiveButton: 
-    gravity: 0
-    dead: 0.05
-    sensitivity: 0
-    snap: 0
-    invert: 0
-    type: 2
-    axis: 2
-    joyNum: 1
-  - serializedVersion: 3
-    m_Name: P1_RVert
-    descriptiveName: 
-    descriptiveNegativeName: 
-    negativeButton: 
-    positiveButton: 
-    altNegativeButton: 
-    altPositiveButton: 
-    gravity: 0
-    dead: 0.05
-    sensitivity: 0
-    snap: 0
-    invert: 0
-    type: 2
-    axis: 3
     joyNum: 1
   - serializedVersion: 3
     m_Name: P2_LHorz
@@ -77,14 +29,30 @@ InputManager:
     positiveButton: 
     altNegativeButton: 
     altPositiveButton: 
-    gravity: 0
-    dead: 0.05
-    sensitivity: 0
+    gravity: 1
+    dead: 0.2
+    sensitivity: 1.3
     snap: 0
     invert: 0
     type: 2
     axis: 0
-    joyNum: 2
+    joyNum: 4
+  - serializedVersion: 3
+    m_Name: P1_LVert
+    descriptiveName: 
+    descriptiveNegativeName: 
+    negativeButton: 
+    positiveButton: 
+    altNegativeButton: 
+    altPositiveButton: 
+    gravity: 1
+    dead: 0.2
+    sensitivity: 1.25
+    snap: 0
+    invert: 1
+    type: 2
+    axis: 1
+    joyNum: 1
   - serializedVersion: 3
     m_Name: P2_LVert
     descriptiveName: 
@@ -93,14 +61,30 @@ InputManager:
     positiveButton: 
     altNegativeButton: 
     altPositiveButton: 
-    gravity: 0
-    dead: 0.05
-    sensitivity: 0
+    gravity: 1
+    dead: 0.2
+    sensitivity: 1.25
+    snap: 0
+    invert: 1
+    type: 2
+    axis: 1
+    joyNum: 4
+  - serializedVersion: 3
+    m_Name: P1_RHorz
+    descriptiveName: 
+    descriptiveNegativeName: 
+    negativeButton: 
+    positiveButton: 
+    altNegativeButton: 
+    altPositiveButton: 
+    gravity: 0.5
+    dead: 0.2
+    sensitivity: 1.5
     snap: 0
     invert: 0
     type: 2
-    axis: 1
-    joyNum: 2
+    axis: 3
+    joyNum: 1
   - serializedVersion: 3
     m_Name: P2_RHorz
     descriptiveName: 
@@ -109,14 +93,30 @@ InputManager:
     positiveButton: 
     altNegativeButton: 
     altPositiveButton: 
-    gravity: 0
-    dead: 0.05
-    sensitivity: 0
+    gravity: 0.5
+    dead: 0.2
+    sensitivity: 1.5
     snap: 0
     invert: 0
     type: 2
-    axis: 2
-    joyNum: 2
+    axis: 3
+    joyNum: 4
+  - serializedVersion: 3
+    m_Name: P1_RVert
+    descriptiveName: 
+    descriptiveNegativeName: 
+    negativeButton: 
+    positiveButton: 
+    altNegativeButton: 
+    altPositiveButton: 
+    gravity: 0.5
+    dead: 0.2
+    sensitivity: 1.5
+    snap: 0
+    invert: 1
+    type: 2
+    axis: 4
+    joyNum: 1
   - serializedVersion: 3
     m_Name: P2_RVert
     descriptiveName: 
@@ -125,14 +125,14 @@ InputManager:
     positiveButton: 
     altNegativeButton: 
     altPositiveButton: 
-    gravity: 0
-    dead: 0.05
-    sensitivity: 0
+    gravity: 0.5
+    dead: 0.2
+    sensitivity: 1.5
     snap: 0
-    invert: 0
+    invert: 1
     type: 2
-    axis: 3
-    joyNum: 2
+    axis: 4
+    joyNum: 4
   - serializedVersion: 3
     m_Name: VirtualKB_LHorz
     descriptiveName: 

@@ -60,17 +60,17 @@ public class sInput : MonoBehaviour
         debugFramesFixed++;
 
         //Debug analog sticks
-        if (Input.GetKeyDown(controls.alt)) { Debug.Log("Printing axis values..."); }
-        if (Input.GetKey(controls.alt))
+        //if (Input.GetKeyDown(controls.alt)) { Debug.Log("Printing axis values..."); }
+        if (Input.GetKeyDown(controls.alt))
         {
             Debug.Log("   Left Analog Horizontal: " + Input.GetAxis("P1_LHorz"));
             Debug.Log("   Left Analog Vertical: " + Input.GetAxis("P1_LVert"));
-            Debug.Log("   Left Analog Horizontal: " + Input.GetAxis("P1_RHorz"));
-            Debug.Log("   Left Analog Vertical: " + Input.GetAxis("P1_RVert"));
-            Debug.Log("   Left Analog Horizontal: " + Input.GetAxis("P2_LHorz"));
-            Debug.Log("   Left Analog Vertical: " + Input.GetAxis("P2_LVert"));
-            Debug.Log("   Left Analog Horizontal: " + Input.GetAxis("P2_RHorz"));
-            Debug.Log("   Left Analog Vertical: " + Input.GetAxis("P2_RVert"));
+            Debug.Log("   Right Analog Horizontal: " + Input.GetAxis("P1_RHorz"));
+            Debug.Log("   Right Analog Vertical: " + Input.GetAxis("P1_RVert"));
+            //Debug.Log("   Left Analog Horizontal: " + Input.GetAxis("P2_LHorz"));
+            //Debug.Log("   Left Analog Vertical: " + Input.GetAxis("P2_LVert"));
+            //Debug.Log("   Right Analog Horizontal: " + Input.GetAxis("P2_RHorz"));
+            //Debug.Log("   Right Analog Vertical: " + Input.GetAxis("P2_RVert"));
         }
 
         //Clear buffered actions
@@ -99,9 +99,32 @@ public class sInput : MonoBehaviour
                 if (Input.GetKeyDown(controls.light) || (controls.rStickUse == InputAction.Light && (Input.GetAxis(controls.rHorz) != 0 || Input.GetAxis(controls.rVert) != 0)))
                 {
                     //Is it a shield grab?
-                    if (Input.GetKey(controls.block) && Input.GetAxis(controls.rHorz) < .1 && Input.GetAxis(controls.rVert) < .1)
+                    if (Input.GetKey(controls.block))
                     {
                         qInput = sPlayer.enumMoves.grab;
+                    }
+                    //Handling of right stick input
+                    else if (controls.rStickUse == InputAction.Light && (Input.GetAxis(controls.rHorz) != 0 || Input.GetAxis(controls.rVert) != 0))
+                    {
+                        //What type of light?
+                        if (Mathf.Abs(Input.GetAxis(controls.rHorz)) > Mathf.Abs(Input.GetAxis(controls.rVert)))
+                        {
+                            //Forward light
+                            if (Input.GetAxis(controls.rHorz) > 0) { qInput = sPlayer.enumMoves.fLight; }
+                            //Pivot Forward light
+                            else
+                            {
+                                pChar.orientation = -pChar.orientation;
+                                qInput = sPlayer.enumMoves.fLight;
+                            }
+                        }
+                        else
+                        {
+                            //Up light
+                            if (Input.GetAxis(controls.rVert) > 0) { qInput = sPlayer.enumMoves.uLight; }
+                            //Down light
+                            else { qInput = sPlayer.enumMoves.dLight; }
+                        }
                     }
                     //Is it a below the heavy attack threshold?
                     else if (Input.GetAxis(controls.moveHorz) < controls.lightToHeavy && Input.GetAxis(controls.moveVert) < controls.lightToHeavy)
@@ -129,32 +152,9 @@ public class sInput : MonoBehaviour
                                 else { qInput = sPlayer.enumMoves.dLight; }
                             }
                         }
-                        else //Its a jab
+                        else//Its a jab
                         {
                             qInput = sPlayer.enumMoves.jab;
-                        }
-                    }
-                    //Handling of c-stick input
-                    else if (controls.rStickUse == InputAction.Light && (Input.GetAxis(controls.rHorz) != 0 || Input.GetAxis(controls.rVert) != 0))
-                    {
-                        //What type of light?
-                        if (Mathf.Abs(Input.GetAxis(controls.rHorz)) > Mathf.Abs(Input.GetAxis(controls.rVert)))
-                        {
-                            //Forward light
-                            if (Input.GetAxis(controls.rHorz) > 0) { qInput = sPlayer.enumMoves.fLight; }
-                            //Pivot Forward light
-                            else
-                            {
-                                pChar.orientation = -pChar.orientation;
-                                qInput = sPlayer.enumMoves.fLight;
-                            }
-                        }
-                        else
-                        {
-                            //Up light
-                            if (Input.GetAxis(controls.rVert) > 0) { qInput = sPlayer.enumMoves.uLight; }
-                            //Down light
-                            else { qInput = sPlayer.enumMoves.dLight; }
                         }
                     }
                     else
@@ -269,8 +269,27 @@ public class sInput : MonoBehaviour
                 if (Input.GetKeyDown(controls.light) || Input.GetKeyDown(controls.heavy) ||
                     ((controls.rStickUse == InputAction.Light || controls.rStickUse == InputAction.Heavy) && (Input.GetAxis(controls.rHorz) != 0 || Input.GetAxis(controls.rVert) != 0)))
                 {
+                    //Handling of right stick input
+                    if ((controls.rStickUse == InputAction.Light || controls.rStickUse == InputAction.Heavy) && (Input.GetAxis(controls.rHorz) != 0 || Input.GetAxis(controls.rVert) != 0))
+                    {
+                        //What type of aerial?
+                        if (Mathf.Abs(Input.GetAxis(controls.rHorz)) > Mathf.Abs(Input.GetAxis(controls.rVert)))
+                        {
+                            //Forward air
+                            if (Input.GetAxis(controls.rHorz) > 0) { qInput = sPlayer.enumMoves.fAir; }
+                            //Back air
+                            else { qInput = sPlayer.enumMoves.bAir; }
+                        }
+                        else
+                        {
+                            //Up air
+                            if (Input.GetAxis(controls.rVert) > 0) { qInput = sPlayer.enumMoves.uAir; }
+                            //Down air
+                            else { qInput = sPlayer.enumMoves.dAir; }
+                        }
+                    }
                     //Is it not a neautral air?
-                    if ((Input.GetKeyDown(controls.light) || Input.GetKeyDown(controls.heavy)) && (Mathf.Abs(Input.GetAxis(controls.moveHorz)) > .25 || Mathf.Abs(Input.GetAxis(controls.moveVert)) > .25))
+                    else if ((Input.GetKeyDown(controls.light) || Input.GetKeyDown(controls.heavy)) && (Mathf.Abs(Input.GetAxis(controls.moveHorz)) > .25 || Mathf.Abs(Input.GetAxis(controls.moveVert)) > .25))
                     {
                         //What type of aerial?
                         if (Mathf.Abs(Input.GetAxis(controls.moveHorz)) > Mathf.Abs(Input.GetAxis(controls.moveVert)))
@@ -291,24 +310,6 @@ public class sInput : MonoBehaviour
                     else if (Input.GetKeyDown(controls.light) || Input.GetKeyDown(controls.heavy))//Its it a nair
                     {
                         qInput = sPlayer.enumMoves.nAir;
-                    }
-                    else //c-stick handling
-                    {
-                        //What type of aerial?
-                        if (Mathf.Abs(Input.GetAxis(controls.rHorz)) > Mathf.Abs(Input.GetAxis(controls.rVert)))
-                        {
-                            //Forward air
-                            if (Input.GetAxis(controls.rHorz) > 0) { qInput = sPlayer.enumMoves.fAir; }
-                            //Back air
-                            else { qInput = sPlayer.enumMoves.bAir; }
-                        }
-                        else
-                        {
-                            //Up air
-                            if (Input.GetAxis(controls.rVert) > 0) { qInput = sPlayer.enumMoves.uAir; }
-                            //Down air
-                            else { qInput = sPlayer.enumMoves.dAir; }
-                        }
                     }
                 }
                 //Is the player inputting airdoge/tech?
@@ -378,9 +379,32 @@ public class sInput : MonoBehaviour
                 if (Input.GetKeyDown(controls.light) || (controls.rStickUse == InputAction.Light && (Input.GetAxis(controls.rHorz) != 0 || Input.GetAxis(controls.rVert) != 0)))
                 {
                     //Is it a shield grab?
-                    if (Input.GetKey(controls.block) && Input.GetAxis(controls.rHorz) < .1 && Input.GetAxis(controls.rVert) < .1)
+                    if (Input.GetKey(controls.block))
                     {
                         qInput = sPlayer.enumMoves.grab;
+                    }
+                    //Handling of right stick input
+                    else if (controls.rStickUse == InputAction.Light && (Input.GetAxis(controls.rHorz) != 0 || Input.GetAxis(controls.rVert) != 0))
+                    {
+                        //What type of light?
+                        if (Mathf.Abs(Input.GetAxis(controls.rHorz)) > Mathf.Abs(Input.GetAxis(controls.rVert)))
+                        {
+                            //Forward light
+                            if (Input.GetAxis(controls.rHorz) < 0) { qInput = sPlayer.enumMoves.fLight; }
+                            //Pivot Forward light
+                            else
+                            {
+                                pChar.orientation = -pChar.orientation;
+                                qInput = sPlayer.enumMoves.fLight;
+                            }
+                        }
+                        else
+                        {
+                            //Up light
+                            if (Input.GetAxis(controls.rVert) > 0) { qInput = sPlayer.enumMoves.uLight; }
+                            //Down light
+                            else { qInput = sPlayer.enumMoves.dLight; }
+                        }
                     }
                     //Is it a below the heavy attack threshold?
                     else if (Input.GetAxis(controls.moveHorz) < controls.lightToHeavy && Input.GetAxis(controls.moveVert) < controls.lightToHeavy)
@@ -411,29 +435,6 @@ public class sInput : MonoBehaviour
                         else //Its a jab
                         {
                             qInput = sPlayer.enumMoves.jab;
-                        }
-                    }
-                    //Handling of c-stick input
-                    else if (controls.rStickUse == InputAction.Light && (Input.GetAxis(controls.rHorz) != 0 || Input.GetAxis(controls.rVert) != 0))
-                    {
-                        //What type of light?
-                        if (Mathf.Abs(Input.GetAxis(controls.rHorz)) > Mathf.Abs(Input.GetAxis(controls.rVert)))
-                        {
-                            //Forward light
-                            if (Input.GetAxis(controls.rHorz) < 0) { qInput = sPlayer.enumMoves.fLight; }
-                            //Pivot Forward light
-                            else
-                            {
-                                pChar.orientation = -pChar.orientation;
-                                qInput = sPlayer.enumMoves.fLight;
-                            }
-                        }
-                        else
-                        {
-                            //Up light
-                            if (Input.GetAxis(controls.rVert) > 0) { qInput = sPlayer.enumMoves.uLight; }
-                            //Down light
-                            else { qInput = sPlayer.enumMoves.dLight; }
                         }
                     }
                     else
@@ -485,6 +486,7 @@ public class sInput : MonoBehaviour
                         qInput = sPlayer.enumMoves.nSpec;
                     }
                 }
+                //Is the player inputting a heavy attack?
                 else if (forceHeavy || Input.GetKeyDown(controls.heavy) || (controls.rStickUse == InputAction.Heavy && (Input.GetAxis(controls.rHorz) != 0 || Input.GetAxis(controls.rVert) != 0)))
                 {
                     //Is it non-directional?
@@ -510,7 +512,7 @@ public class sInput : MonoBehaviour
                             else { qInput = sPlayer.enumMoves.dStrong; }
                         }
                     }
-                    //Handling of c-stick input
+                    //Handling of right stick input
                     else if (controls.rStickUse == InputAction.Heavy && (Input.GetAxis(controls.rHorz) != 0 || Input.GetAxis(controls.rVert) != 0))
                     {
                         //What type of strong?
@@ -548,8 +550,27 @@ public class sInput : MonoBehaviour
                 if (Input.GetKeyDown(controls.light) || Input.GetKeyDown(controls.heavy) ||
                     ((controls.rStickUse == InputAction.Light || controls.rStickUse == InputAction.Heavy) && (Input.GetAxis(controls.rHorz) != 0 || Input.GetAxis(controls.rVert) != 0)))
                 {
+                    //Handling of right stick input
+                    if ((controls.rStickUse == InputAction.Light || controls.rStickUse == InputAction.Heavy) && (Input.GetAxis(controls.rHorz) != 0 || Input.GetAxis(controls.rVert) != 0))
+                    {
+                        //What type of aerial?
+                        if (Mathf.Abs(Input.GetAxis(controls.rHorz)) > Mathf.Abs(Input.GetAxis(controls.rVert)))
+                        {
+                            //Forward air
+                            if (Input.GetAxis(controls.rHorz) < 0) { qInput = sPlayer.enumMoves.fAir; }
+                            //Back air
+                            else { qInput = sPlayer.enumMoves.bAir; }
+                        }
+                        else
+                        {
+                            //Up air
+                            if (Input.GetAxis(controls.rVert) > 0) { qInput = sPlayer.enumMoves.uAir; }
+                            //Down air
+                            else { qInput = sPlayer.enumMoves.dAir; }
+                        }
+                    }
                     //Is it not a neautral air?
-                    if ((Input.GetKeyDown(controls.light) || Input.GetKeyDown(controls.heavy)) && (Mathf.Abs(Input.GetAxis(controls.moveHorz)) > .25 || Mathf.Abs(Input.GetAxis(controls.moveVert)) > .25))
+                    else if ((Input.GetKeyDown(controls.light) || Input.GetKeyDown(controls.heavy)) && (Mathf.Abs(Input.GetAxis(controls.moveHorz)) > .25 || Mathf.Abs(Input.GetAxis(controls.moveVert)) > .25))
                     {
                         //What type of aerial?
                         if (Mathf.Abs(Input.GetAxis(controls.moveHorz)) > Mathf.Abs(Input.GetAxis(controls.moveVert)))
@@ -570,24 +591,6 @@ public class sInput : MonoBehaviour
                     else if (Input.GetKeyDown(controls.light) || Input.GetKeyDown(controls.heavy))//Its it a nair
                     {
                         qInput = sPlayer.enumMoves.nAir;
-                    }
-                    else //c-stick handling
-                    {
-                        //What type of aerial?
-                        if (Mathf.Abs(Input.GetAxis(controls.rHorz)) > Mathf.Abs(Input.GetAxis(controls.rVert)))
-                        {
-                            //Forward air
-                            if (Input.GetAxis(controls.rHorz) < 0) { qInput = sPlayer.enumMoves.fAir; }
-                            //Back air
-                            else { qInput = sPlayer.enumMoves.bAir; }
-                        }
-                        else
-                        {
-                            //Up air
-                            if (Input.GetAxis(controls.rVert) > 0) { qInput = sPlayer.enumMoves.uAir; }
-                            //Down air
-                            else { qInput = sPlayer.enumMoves.dAir; }
-                        }
                     }
                 }
                 //Is the player inputting airdoge/tech?
@@ -770,9 +773,19 @@ public class sInput : MonoBehaviour
                         }
                     }
                     //Analog Movement
-                    else if (Input.GetAxis(controls.moveHorz) != 0 && Input.GetAxis(controls.moveVert) != 0)
+                    else if (Input.GetAxis(controls.moveHorz) != 0 || Input.GetAxis(controls.moveVert) != 0)
                     {
+                        //Adjust orientation
+                        if (pChar.orientation == 1 && Input.GetAxis(controls.moveHorz) < 0) { pChar.orientation = -1; }
+                        if (pChar.orientation == -1 && Input.GetAxis(controls.moveHorz) > 0) { pChar.orientation = 1; }
 
+                        //Crouch
+                        if (Input.GetAxis(controls.moveVert) < -.5 && Input.GetAxis(controls.moveVert) < Mathf.Abs(Input.GetAxis(controls.moveHorz))) { pChar.GetCharAnimator.Play("Crouching"); }
+                        //Move back and fourth
+                        else
+                        {
+
+                        }
                     }
                     else
                     {
