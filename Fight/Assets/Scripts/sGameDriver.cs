@@ -15,7 +15,7 @@ public class sGameDriver : MonoBehaviour
         public Vector3 spawnpoint;
         public int stocks;
 
-        Player(string n, GameObject mdl, Color col, sPlayer pChar, sInput ctrl, Vector3 sp, int s)
+        public Player(string n, GameObject mdl, Color col, sPlayer pChar, sInput ctrl, Vector3 sp, int s)
         {
             name = n;
             model = mdl;
@@ -52,8 +52,8 @@ public class sGameDriver : MonoBehaviour
         startup = new sStartSettings();
         fight = new sBattleDriver();
 
-        fight.setP1(new Player(p1Name, pfPlayer, p1Color, pfPlayer.GetComponent<sPlayer>, pfPlayer.GetComponent<sInput>, new Vector3(-14f, 7.5f, -2f), 3));
-        fight.setP2(new Player(p2Name, pfPlayer, p2Color, pfPlayer.GetComponent<sPlayer>, pfPlayer.GetComponent<sInput>, new Vector3(14f, 7.5f, -2f), 3));
+        fight.setP1(new Player(p1Name, pfPlayer, p1Color, pfPlayer.GetComponent<sPlayer>(), pfPlayer.GetComponent<sInput>(), new Vector3(-14f, 7.5f, -2f), 3));
+        fight.setP2(new Player(p2Name, pfPlayer, p2Color, pfPlayer.GetComponent<sPlayer>(), pfPlayer.GetComponent<sInput>(), new Vector3(14f, 7.5f, -2f), 3));
     }
 
     // Update is called once per frame

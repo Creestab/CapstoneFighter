@@ -551,7 +551,7 @@ PrefabInstance:
         type: 3}
       propertyPath: ctrlProfile
       value: 
-      objectReference: {fileID: 4900000, guid: e5f750112d1958e40832336a4367b8c7, type: 3}
+      objectReference: {fileID: 4900000, guid: 6a0b5b4fcbff71442b13e8f989b2ad4c, type: 3}
     - target: {fileID: 7369548044506996763, guid: 2e37873737d00264596234528fb282e4,
         type: 3}
       propertyPath: _sensors.Array.data[0]._atkColliders

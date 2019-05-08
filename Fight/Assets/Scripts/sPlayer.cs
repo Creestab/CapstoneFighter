@@ -16,17 +16,19 @@ public class sPlayer : MonoBehaviour
 {
     [SerializeField] Animator _anim;
     [SerializeField] List<PlayerSensorData> _sensors;
-    [SerializeField] Dictionary<enumMoves, MoveData> _moves;
 
-    public GameObject pChar;
+    public Dictionary<enumMoves, float[,]> _moves;
     public TextAsset ctrlProfile;
 
     public int pNumber;
     public int orientation; //1 for facing right, -1 for facing left.
-    bool airborne;
-    bool fastfall;
     public static int maxJumps;
     int jumps;
+    int stun;
+    bool actable;
+    bool airborne;
+    bool fastfall;
+    bool holdingPlayer;
 
     float mHorz;
     float mVert;
@@ -34,6 +36,10 @@ public class sPlayer : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        SetMoves();
+
+        actable = true;
+        stun = 0;
         airborne = true;
         fastfall = false;
         jumps = maxJumps - 1;
@@ -54,7 +60,7 @@ public class sPlayer : MonoBehaviour
         }
     }
 
-    public struct MoveData
+ /*   public struct MoveData
     {
         public enumMoves moveSlot;
         public string moveName;
@@ -64,9 +70,10 @@ public class sPlayer : MonoBehaviour
         {
             moveSlot = slot;
             moveName = name;
-            frameData = sMoveData.FrameData[name];
+            frameData = _sMoveData.FrameData[name];
         }
-    }
+    }*/
+
     public enum enumMoves
     {
         none,
@@ -96,16 +103,30 @@ public class sPlayer : MonoBehaviour
         getup,
         getupAtk,
         shield,
+        tech,
+        techHop,
         fRoll,
         bRoll,
         dodge,
         airdodge
     }
 
+    //Default Movesets
+    private void SetMoves()
+    {
+        _moves = new Dictionary<enumMoves, float[,]>();
+        _moves.Add(enumMoves.jab, _sMoveData.GetFrameData["Vanilla Punch"]);
+    }
+
     public Animator GetCharAnimator { get { return _anim; } }
     public List<PlayerSensorData> GetPlayerSensors { get { return _sensors; } }
-    public Dictionary<enumMoves, MoveData> GetPlayerMoves {  get { return _moves; } }
+    public Dictionary<enumMoves, float[,]> GetPlayerMoves {  get { return _moves; } }
 
+    public bool canJump()
+    {
+        if (jumps > 0) { return true; }
+        else return false;
+    }
     public bool isAirborne()
     {
         return airborne;
@@ -113,5 +134,41 @@ public class sPlayer : MonoBehaviour
     public void modAirborne()
     {
         airborne = !airborne;
+    }
+    public bool isFastfall()
+    {
+        return fastfall;
+    }
+    public void modFastfall()
+    {
+        fastfall = !fastfall;
+    }
+    public bool isActable()
+    {
+        return actable;
+    }
+    public void modActable()
+    {
+        actable = !actable;
+    }
+    public void setActable(bool state)
+    {
+        actable = state;
+    }
+    public int getStun()
+    {
+        return stun;
+    }
+    public void setStun(int s)
+    {
+        stun = s;
+    }
+    public bool isHoldingPlayer()
+    {
+        return holdingPlayer;
+    }
+    public void modHoldingPlayer()
+    {
+        holdingPlayer = !holdingPlayer;
     }
 }

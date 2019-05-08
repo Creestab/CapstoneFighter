@@ -33,9 +33,6 @@ public class sInput : MonoBehaviour
     sPlayer pChar;
     ControlScheme controls;
 
-    bool actable;
-    int stun;
-
     sPlayer.enumMoves qInput;
     int xBuf;
     bool forceHeavy;
@@ -50,9 +47,6 @@ public class sInput : MonoBehaviour
         controls = new ControlScheme();
         setControls(pChar.ctrlProfile);
 
-        actable = true;
-        stun = 0;
-
         qInput = sPlayer.enumMoves.none;
         xBuf = 0;
         forceHeavy = false;
@@ -65,13 +59,27 @@ public class sInput : MonoBehaviour
     {
         debugFramesFixed++;
 
+        //Debug analog sticks
+        if (Input.GetKeyDown(controls.alt)) { Debug.Log("Printing axis values..."); }
+        if (Input.GetKey(controls.alt))
+        {
+            Debug.Log("   Left Analog Horizontal: " + Input.GetAxis("P1_LHorz"));
+            Debug.Log("   Left Analog Vertical: " + Input.GetAxis("P1_LVert"));
+            Debug.Log("   Left Analog Horizontal: " + Input.GetAxis("P1_RHorz"));
+            Debug.Log("   Left Analog Vertical: " + Input.GetAxis("P1_RVert"));
+            Debug.Log("   Left Analog Horizontal: " + Input.GetAxis("P2_LHorz"));
+            Debug.Log("   Left Analog Vertical: " + Input.GetAxis("P2_LVert"));
+            Debug.Log("   Left Analog Horizontal: " + Input.GetAxis("P2_RHorz"));
+            Debug.Log("   Left Analog Vertical: " + Input.GetAxis("P2_RVert"));
+        }
+
         //Clear buffered actions
         if (qInput != sPlayer.enumMoves.none)
         {
             if (xBuf == 0)
             {
                 qInput = sPlayer.enumMoves.none;
-                Debug.Log("Queued move expired" + "   Fixed Update #" + debugFramesFixed);
+                //Debug.Log("Queued move expired" + "   Fixed Update #" + debugFramesFixed);
             }
             else { xBuf--; }
         }
@@ -303,8 +311,25 @@ public class sInput : MonoBehaviour
                         }
                     }
                 }
-                //Is the player inputting an airdodge?
-                else if (Input.GetKeyDown(controls.block) || Input.GetKeyDown(controls.grab)) { qInput = sPlayer.enumMoves.airdodge; }
+                //Is the player inputting airdoge/tech?
+                else if (Input.GetKeyDown(controls.block) || Input.GetKeyDown(controls.grab))
+                {
+                    //What type of tech?
+                    if (Mathf.Abs(Input.GetAxis(controls.moveHorz)) > Mathf.Abs(Input.GetAxis(controls.moveVert)))
+                    {
+                        //Tech Forward Roll
+                        if (Input.GetAxis(controls.moveHorz) > 0) { qInput = sPlayer.enumMoves.fRoll; }
+                        //Tech Backward Roll
+                        else { qInput = sPlayer.enumMoves.bRoll; }
+                    }
+                    else
+                    {
+                        //Tech hop
+                        if (Input.GetAxis(controls.moveVert) > 0) { qInput = sPlayer.enumMoves.techHop; }
+                        //Default to normal tech
+                        else { qInput = sPlayer.enumMoves.tech; }
+                    }
+                }
                 //Is the player inputting a special?
                 else if (Input.GetKeyDown(controls.special))
                 {
@@ -565,8 +590,25 @@ public class sInput : MonoBehaviour
                         }
                     }
                 }
-                //Is the player inputting an airdodge?
-                else if (Input.GetKeyDown(controls.block) || Input.GetKeyDown(controls.grab)) { qInput = sPlayer.enumMoves.airdodge; }
+                //Is the player inputting airdoge/tech?
+                else if (Input.GetKeyDown(controls.block) || Input.GetKeyDown(controls.grab))
+                {
+                    //What type of tech?
+                    if (Mathf.Abs(Input.GetAxis(controls.moveHorz)) > Mathf.Abs(Input.GetAxis(controls.moveVert)))
+                    {
+                        //Tech Back Roll
+                        if (Input.GetAxis(controls.moveHorz) > 0) { qInput = sPlayer.enumMoves.bRoll; }
+                        //Tech Forward Roll
+                        else { qInput = sPlayer.enumMoves.fRoll; }
+                    }
+                    else
+                    {
+                        //Tech hop
+                        if (Input.GetAxis(controls.moveVert) > 0) { qInput = sPlayer.enumMoves.techHop; }
+                        //Default to normal tech
+                        else { qInput = sPlayer.enumMoves.tech; }
+                    }
+                }
                 //Is the player inputting a special?
                 else if (Input.GetKeyDown(controls.special))
                 {
@@ -610,7 +652,7 @@ public class sInput : MonoBehaviour
         if (qInput != qTemp)
         {
             xBuf = controls.buffer;
-            Debug.Log("Input received: " + qInput + "   Fixed Update #" + debugFramesFixed);
+            //Debug.Log("Input received: " + qInput + "   Fixed Update #" + debugFramesFixed);
         }
     }
 
@@ -619,37 +661,75 @@ public class sInput : MonoBehaviour
     {
         debugFrames++;
 
-        if (pChar.GetCharAnimator.GetCurrentAnimatorStateInfo(0).IsName("Idle") || pChar.GetCharAnimator.GetCurrentAnimatorStateInfo(0).IsName("Running"))
+        if (pChar.GetCharAnimator.GetCurrentAnimatorStateInfo(0).IsName("Idle") || pChar.GetCharAnimator.GetCurrentAnimatorStateInfo(0).IsName("Running") 
+                || pChar.GetCharAnimator.GetCurrentAnimatorStateInfo(0).IsName("Crouching") || pChar.GetCharAnimator.GetCurrentAnimatorStateInfo(0).IsName("Blocking"))
         {
-            actable = true;
+            //Drops shield when not holding the input anymore
+            if(pChar.GetCharAnimator.GetCurrentAnimatorStateInfo(0).IsName("Blocking") && Input.GetKeyUp(controls.block)) { pChar.GetCharAnimator.Play("Idle"); }
+
+            pChar.setActable(true);
             if (pChar.isAirborne()) { pChar.modAirborne(); }
         }
-        else if (pChar.GetCharAnimator.GetCurrentAnimatorStateInfo(0).IsName("Airborne"))
+        else if (pChar.GetCharAnimator.GetCurrentAnimatorStateInfo(0).IsName("Airborne") || pChar.GetCharAnimator.GetCurrentAnimatorStateInfo(0).IsName("AirJump"))
         {
-            actable = true;
+            pChar.setActable(true);
             if(!pChar.isAirborne()) { pChar.modAirborne(); }
         }
         else
         {
-            actable = false;
+            pChar.setActable(false);
         }
 
         //Action processing
-        if (actable)
+        if (pChar.isActable())
         {
             //Queued input from buffer
             if (qInput != sPlayer.enumMoves.none)
             {
-                Debug.Log("Action pulled from buffer: " + qInput + "   Update #" + debugFrames);
+                //Debug.Log("Action pulled from buffer: " + qInput + "   Update #" + debugFrames);
 
                 ////////////////////
                 //Possible actions//
                 ////////////////////
-                //Jump
-                if (qInput == sPlayer.enumMoves.jump && !pChar.isAirborne()) { pChar.GetCharAnimator.Play("JumpSquat"); }
-                else if (qInput == sPlayer.enumMoves.jump) { pChar.GetCharAnimator.Play("AirJump"); }
-                //Jab
-                if (qInput == sPlayer.enumMoves.jab) { pChar.GetCharAnimator.Play("Jab"); }
+                if (!pChar.isAirborne())
+                {
+                    //Bufferable grounded move processing
+                    if (qInput == sPlayer.enumMoves.jump) { pChar.GetCharAnimator.Play("JumpSquat"); }
+                    else if (qInput == sPlayer.enumMoves.jab) { pChar.GetCharAnimator.Play("Jab"); }
+                    else if (qInput == sPlayer.enumMoves.fLight) { pChar.GetCharAnimator.Play("ForwardLight"); }
+                    else if (qInput == sPlayer.enumMoves.uLight) { pChar.GetCharAnimator.Play("UpLight"); }
+                    else if (qInput == sPlayer.enumMoves.dLight) { pChar.GetCharAnimator.Play("DownLight"); }
+                    else if (qInput == sPlayer.enumMoves.fStrong) { pChar.GetCharAnimator.Play("ForwardStrong"); }
+                    else if (qInput == sPlayer.enumMoves.uStrong) { pChar.GetCharAnimator.Play("UpStrong"); }
+                    else if (qInput == sPlayer.enumMoves.dStrong) { pChar.GetCharAnimator.Play("DownStrong"); }
+                    else if (qInput == sPlayer.enumMoves.nSpec) { pChar.GetCharAnimator.Play("NeutralSpecial"); }
+                    else if (qInput == sPlayer.enumMoves.fSpec) { pChar.GetCharAnimator.Play("ForwardSpecial"); }
+                    else if (qInput == sPlayer.enumMoves.uSpec) { pChar.GetCharAnimator.Play("UpSpecial"); }
+                    else if (qInput == sPlayer.enumMoves.dSpec) { pChar.GetCharAnimator.Play("DownSpecial"); }
+                    else if (qInput == sPlayer.enumMoves.dodge) { pChar.GetCharAnimator.Play("SpotDodge"); }
+                    else if (qInput == sPlayer.enumMoves.fRoll) { pChar.GetCharAnimator.Play("ForwardRoll"); }
+                    else if (qInput == sPlayer.enumMoves.bRoll) { pChar.GetCharAnimator.Play("BackwardRoll"); }
+                    else if (qInput == sPlayer.enumMoves.grab) { pChar.GetCharAnimator.Play("Grabbing"); }
+                }
+                else
+                {
+                    //Bufferable aerial move processing
+                    if (qInput == sPlayer.enumMoves.jump && pChar.canJump()) { pChar.GetCharAnimator.Play("AirJump"); }
+                    else if (qInput == sPlayer.enumMoves.nAir) { pChar.GetCharAnimator.Play("NeutralAir"); }
+                    else if (qInput == sPlayer.enumMoves.fAir) { pChar.GetCharAnimator.Play("ForwardAir"); }
+                    else if (qInput == sPlayer.enumMoves.bAir) { pChar.GetCharAnimator.Play("BackAir"); }
+                    else if (qInput == sPlayer.enumMoves.uAir) { pChar.GetCharAnimator.Play("UpAir"); }
+                    else if (qInput == sPlayer.enumMoves.dAir) { pChar.GetCharAnimator.Play("DownAir"); }
+                    else if (qInput == sPlayer.enumMoves.nSpec) { pChar.GetCharAnimator.Play("NeutralSpecial"); }
+                    else if (qInput == sPlayer.enumMoves.fSpec) { pChar.GetCharAnimator.Play("ForwardSpecial"); }
+                    else if (qInput == sPlayer.enumMoves.uSpec) { pChar.GetCharAnimator.Play("UpSpecial"); }
+                    else if (qInput == sPlayer.enumMoves.dSpec) { pChar.GetCharAnimator.Play("DownSpecial"); }
+                    else if (qInput == sPlayer.enumMoves.airdodge
+                            || qInput == sPlayer.enumMoves.fRoll
+                            || qInput == sPlayer.enumMoves.bRoll
+                            || qInput == sPlayer.enumMoves.tech
+                            || qInput == sPlayer.enumMoves.techHop) { pChar.GetCharAnimator.Play("AirDodge"); }
+                }
 
                 //Buffered action executed
                 qInput = sPlayer.enumMoves.none;
@@ -658,27 +738,52 @@ public class sInput : MonoBehaviour
             //Process non-bufferable actions (like movement)
             else
             {
-                //Key movement
-                if (Input.GetKey(controls.down))
+                //Grounded actions
+                if (!pChar.isAirborne())
                 {
-                    pChar.GetCharAnimator.Play("Crouching");
-                }
-                else if (Input.GetKey(controls.right))
-                {
-                    pChar.orientation = 1;
-                    pChar.GetCharAnimator.Play("Running");
-                }
-                else if (Input.GetKey(controls.left))
-                {
-                    pChar.orientation = -1;
-                    pChar.GetCharAnimator.Play("Running");
-                }
-                //Analog Movement
-                else if (Input.GetAxis(controls.moveHorz) != 0 && Input.GetAxis(controls.moveVert) != 0)
-                {
+                    //Grab actions
+                    if (pChar.isHoldingPlayer())
+                    {
 
+                    }
+                    //Enter Block
+                    if (Input.GetKeyDown(controls.block) && !pChar.GetCharAnimator.GetCurrentAnimatorStateInfo(0).IsName("Blocking")) { pChar.GetCharAnimator.Play("Blocking"); }
+                    //Key movement
+                    else if (Input.GetKey(controls.down))
+                    {
+                        if (!pChar.GetCharAnimator.GetCurrentAnimatorStateInfo(0).IsName("Crouching")) { pChar.GetCharAnimator.Play("Crouching"); }
+                    } 
+                    else if (Input.GetKey(controls.right))
+                    {
+                        if (pChar.orientation != 1 || !pChar.GetCharAnimator.GetCurrentAnimatorStateInfo(0).IsName("Running"))
+                        {
+                            pChar.orientation = 1;
+                            pChar.GetCharAnimator.Play("Running");
+                        }
+                    }
+                    else if (Input.GetKey(controls.left))
+                    {
+                        if (pChar.orientation != -1 || !pChar.GetCharAnimator.GetCurrentAnimatorStateInfo(0).IsName("Running"))
+                        {
+                            pChar.orientation = -1;
+                            pChar.GetCharAnimator.Play("Running");
+                        }
+                    }
+                    //Analog Movement
+                    else if (Input.GetAxis(controls.moveHorz) != 0 && Input.GetAxis(controls.moveVert) != 0)
+                    {
+
+                    }
+                    else
+                    {
+                        pChar.GetCharAnimator.Play("Idle");
+                    }
                 }
-                else { pChar.GetCharAnimator.Play("Idle"); }
+                else //Aerial actions
+                {
+                    //Initiate fastfall
+                    if(!pChar.isFastfall() && Input.GetAxis(controls.moveVert) < .9) { pChar.modFastfall(); }
+                }
             }
         }
         //Process influence to inactable states (DI, special fall drift, mashing, ext.)
@@ -686,24 +791,20 @@ public class sInput : MonoBehaviour
         {
 
         }
-    }
 
-    public bool isActable()
-    {
-        return actable;
-    }
-    public void modActable()
-    {
-        actable = !actable;
-    }
-
-    public int getStun()
-    {
-        return stun;
-    }
-    public void setStun(int s)
-    {
-        stun = s;
+        //Debuging using moves after actable states
+        /*if (qInput == sPlayer.enumMoves.jab && (pChar.GetCharAnimator.GetCurrentAnimatorStateInfo(0).IsName("Idle") || pChar.GetCharAnimator.GetCurrentAnimatorStateInfo(0).IsName("Running")))
+        {
+            Debug.Log("Should be able to jab");
+            if(pChar.isActable()) { Debug.Log( "Actable"); }
+            else { Debug.Log("Error: Not Actable when should be actable"); }
+        }
+        else if(Input.GetKeyUp(controls.right) || Input.GetKeyUp(controls.left))
+        {
+            Debug.Log("Stopped moving with no jab in buffer");
+            if (actable) { Debug.Log("Actable"); }
+            else { Debug.Log("Error: Not Actable when should be actable"); }
+        }*/
     }
 
     public ControlScheme getControls()

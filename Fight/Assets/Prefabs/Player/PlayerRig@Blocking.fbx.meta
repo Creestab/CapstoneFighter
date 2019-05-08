@@ -1,0 +1,214 @@
+fileFormatVersion: 2
+guid: 69a8ebddc1e738e4ba8cd04c549c888b
+ModelImporter:
+  serializedVersion: 23
+  fileIDToRecycleName:
+    100000: Control_CoG
+    100002: Control_Head
+    100004: Control_Hips
+    100006: Control_LElbow
+    100008: Control_LFoot
+    100010: Control_LKnee
+    100012: Control_LowerBack
+    100014: Control_LWrist
+    100016: Control_MidBack
+    100018: Control_RElbow
+    100020: Control_RFoot
+    100022: Control_RKnee
+    100024: Control_RWrist
+    100026: Control_Shoulders
+    100028: Control_UpperBack
+    100030: HeadTop
+    100032: IK_LArm
+    100034: IK_LLeg
+    100036: IK_RArm
+    100038: IK_RLeg
+    100040: joint1
+    100042: joint1 1
+    100044: joint2
+    100046: joint2 1
+    100048: joint3
+    100050: joint3 1
+    100052: joint4
+    100054: joint4 1
+    100056: L_Elbow
+    100058: L_Hand
+    100060: L_Hip
+    100062: L_Knee
+    100064: L_RLAnkle
+    100066: L_RLHeel
+    100068: L_RLRoll
+    100070: L_RLToe
+    100072: L_Shoulder
+    100074: L_Wrist
+    100076: LowerBackJoint
+    100078: MidBackJoint
+    100080: NeckJoint
+    100082: PelvisJoint
+    100084: //RootNode
+    100086: R_Elbow
+    100088: R_Hand
+    100090: R_Hip
+    100092: R_Knee
+    100094: R_RLAnkle
+    100096: R_RLHeel
+    100098: R_RLRoll
+    100100: R_RLToe
+    100102: R_Shoulder
+    100104: R_Wrist
+    100106: Rig
+    100108: Root
+    100110: ShoulderJoint
+    100112: transform1
+    100114: transform2
+    100116: UpperBackJoint
+    400000: Control_CoG
+    400002: Control_Head
+    400004: Control_Hips
+    400006: Control_LElbow
+    400008: Control_LFoot
+    400010: Control_LKnee
+    400012: Control_LowerBack
+    400014: Control_LWrist
+    400016: Control_MidBack
+    400018: Control_RElbow
+    400020: Control_RFoot
+    400022: Control_RKnee
+    400024: Control_RWrist
+    400026: Control_Shoulders
+    400028: Control_UpperBack
+    400030: HeadTop
+    400032: IK_LArm
+    400034: IK_LLeg
+    400036: IK_RArm
+    400038: IK_RLeg
+    400040: joint1
+    400042: joint1 1
+    400044: joint2
+    400046: joint2 1
+    400048: joint3
+    400050: joint3 1
+    400052: joint4
+    400054: joint4 1
+    400056: L_Elbow
+    400058: L_Hand
+    400060: L_Hip
+    400062: L_Knee
+    400064: L_RLAnkle
+    400066: L_RLHeel
+    400068: L_RLRoll
+    400070: L_RLToe
+    400072: L_Shoulder
+    400074: L_Wrist
+    400076: LowerBackJoint
+    400078: MidBackJoint
+    400080: NeckJoint
+    400082: PelvisJoint
+    400084: //RootNode
+    400086: R_Elbow
+    400088: R_Hand
+    400090: R_Hip
+    400092: R_Knee
+    400094: R_RLAnkle
+    400096: R_RLHeel
+    400098: R_RLRoll
+    400100: R_RLToe
+    400102: R_Shoulder
+    400104: R_Wrist
+    400106: Rig
+    400108: Root
+    400110: ShoulderJoint
+    400112: transform1
+    400114: transform2
+    400116: UpperBackJoint
+    2100000: lambert1
+    4300000: Rig
+    7400000: Take 001
+    9500000: //RootNode
+    13700000: Rig
+  externalObjects: {}
+  materials:
+    importMaterials: 0
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    importVisibility: 0
+    importBlendShapes: 0
+    importCameras: 0
+    importLights: 0
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 0
+    previousCalculatedGlobalScale: 0.01
+    hasPreviousCalculatedGlobalScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

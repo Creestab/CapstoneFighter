@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class sMoveData : MonoBehaviour
+public class _sMoveData : MonoBehaviour
 {
     //List of moves
     /*{{frame 0, ending frame, # of hit instances, special frame type (0 if none), special frame start, special frame end, rarity (for draft: 0 common, 1 uncommon, 2 rare)},

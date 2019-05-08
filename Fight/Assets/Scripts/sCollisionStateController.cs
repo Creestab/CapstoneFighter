@@ -2,17 +2,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CollisionStateController : StateMachineBehaviour
+public class sCollisionStateController : StateMachineBehaviour
 {
     [SerializeField] sSensor.ColliderState _tempCollider;
     [SerializeField] sPlayer.enumMoves _moveType;
     float[,] _fData;
     float _animLength;
 
+
+
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        _fData = sMoveData.GetFrameData[animator.gameObject.GetComponent<sPlayer>().GetPlayerMoves[_moveType].moveName];
+
+        _fData = animator.gameObject.GetComponent<sPlayer>().GetPlayerMoves[_moveType];
         _animLength = _fData[0, 1];
     }
 

@@ -61,6 +61,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\GamePadInput\Demo\DemoScript.cs" />
+    <Compile Include="Assets\GamePadInput\GamePad.cs" />
     <Compile Include="Assets\Legacy\GorillaTutorial\LCustomEditor.cs" />
     <Compile Include="Assets\Legacy\GorillaTutorial\LFightMaster.cs" />
     <Compile Include="Assets\Legacy\GorillaTutorial\LInput.cs" />
@@ -80,6 +82,8 @@
     <None Include="Assets\XInputDotNet\Docs.txt" />
     <None Include="Assets\Text\Keyboard_Default.txt" />
     <None Include="Assets\XInputDotNet\MITLicense.txt" />
+    <None Include="Assets\Text\GCC2_Default.txt" />
+    <None Include="Assets\Text\GCC1_Default.txt" />
     <Reference Include="Unity.TextMeshPro.Editor">
       <HintPath>E:/Desktop/Programming/Unity/CapstoneFighter/Fight/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
     </Reference>
