@@ -420,72 +420,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 562367312}
   m_CullTransparentMesh: 0
---- !u!1 &670223144
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 670223147}
-  - component: {fileID: 670223146}
-  - component: {fileID: 670223145}
-  m_Layer: 0
-  m_Name: EventSystem
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &670223145
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 670223144}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 1077351063, guid: f70555f144d8491a825f0804e09c671c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_HorizontalAxis: Horizontal
-  m_VerticalAxis: Vertical
-  m_SubmitButton: Submit
-  m_CancelButton: Cancel
-  m_InputActionsPerSecond: 10
-  m_RepeatDelay: 0.5
-  m_ForceModuleActive: 0
---- !u!114 &670223146
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 670223144}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -619905303, guid: f70555f144d8491a825f0804e09c671c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_FirstSelected: {fileID: 0}
-  m_sendNavigationEvents: 1
-  m_DragThreshold: 10
---- !u!4 &670223147
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 670223144}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &707320530
 GameObject:
   m_ObjectHideFlags: 0
@@ -1224,11 +1158,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 2605418026564703558}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4217e17ee519f3e4cafb23f85c6c922c, type: 3}
+  m_Script: {fileID: 11500000, guid: ec5b4aeca1977ff4e906db042debe64b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tRespawn: 0
-  maxStocks: 0
+  Player: {fileID: 9044763036549695072, guid: 2e37873737d00264596234528fb282e4, type: 3}
+  respawnTime: 1
+  startingStocks: 3
+  player1Name: Player 1
+  player1Color: {r: 0.009242535, g: 0, b: 1, a: 0}
+  player1Controls: {fileID: 4900000, guid: 6a0b5b4fcbff71442b13e8f989b2ad4c, type: 3}
+  player1Moveset: {fileID: 4900000, guid: 0d96a1971dcab0e419d81f40e7150ef0, type: 3}
+  player2Name: Player 2
+  player2Color: {r: 1, g: 0, b: 0, a: 0}
+  player2Controls: {fileID: 4900000, guid: 55d6acde2098d9241ba66f3ce7a3840d, type: 3}
+  player2Moveset: {fileID: 4900000, guid: 0d96a1971dcab0e419d81f40e7150ef0, type: 3}
 --- !u!4 &2605418026564995430
 Transform:
   m_ObjectHideFlags: 0

@@ -1059,7 +1059,7 @@ Rigidbody:
   m_Mass: 1
   m_Drag: 1
   m_AngularDrag: 1
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
@@ -1115,8 +1115,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _anim: {fileID: 5975999388802473011}
   _sensors:
-  - _sensors: {fileID: 4500759357559119383}
-    _atkColliders: 1
+  - _sensors:
+    - {fileID: 4500759357559119383}
+    _atkType: 2
+  ctrlProfile: {fileID: 4900000, guid: e5f750112d1958e40832336a4367b8c7, type: 3}
+  orientation: 1
+  maxJumps: 2
+  pNumber: 0
+  moveSpeed: 100
+  jumpSpeed: 100
+  airjumpSpeed: 100
+  fallSpeed: 100
 --- !u!114 &5562589085949743872
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1129,10 +1138,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7a9ff59200488d43b9b17af1aebde9f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pControl: {fileID: 7369548044506996763}
-  iJump: 32
-  iMoveRight: 100
-  iTilt: 44
 --- !u!1001 &266963156745418368
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2243,7 +2248,27 @@ PrefabInstance:
     - target: {fileID: 4703710992814357164, guid: 3f651060aeb12e3429baf87675319c22,
         type: 3}
       propertyPath: m_Name
-      value: HitBox_Jab
+      value: HitBox_Vanilla Punch_1
+      objectReference: {fileID: 0}
+    - target: {fileID: 791848979194456849, guid: 3f651060aeb12e3429baf87675319c22,
+        type: 3}
+      propertyPath: _instance
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 791848979194456849, guid: 3f651060aeb12e3429baf87675319c22,
+        type: 3}
+      propertyPath: _parent
+      value: 
+      objectReference: {fileID: 8751689906622573144}
+    - target: {fileID: 2701890553663676882, guid: 3f651060aeb12e3429baf87675319c22,
+        type: 3}
+      propertyPath: m_Height
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2701890553663676882, guid: 3f651060aeb12e3429baf87675319c22,
+        type: 3}
+      propertyPath: m_Direction
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9210869641475357624, guid: 3f651060aeb12e3429baf87675319c22,
         type: 3}
@@ -2300,26 +2325,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 2701890553663676882, guid: 3f651060aeb12e3429baf87675319c22,
-        type: 3}
-      propertyPath: m_Height
-      value: 1.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 2701890553663676882, guid: 3f651060aeb12e3429baf87675319c22,
-        type: 3}
-      propertyPath: m_Direction
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 791848979194456849, guid: 3f651060aeb12e3429baf87675319c22,
-        type: 3}
-      propertyPath: _instance
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 791848979194456849, guid: 3f651060aeb12e3429baf87675319c22,
-        type: 3}
-      propertyPath: _parent
-      value: 
-      objectReference: {fileID: 8751689906622573144}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3f651060aeb12e3429baf87675319c22, type: 3}
 --- !u!4 &5430016903121129150 stripped

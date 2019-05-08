@@ -192,12 +192,12 @@ PrefabInstance:
     - target: {fileID: 7369548044506996763, guid: 2e37873737d00264596234528fb282e4,
         type: 3}
       propertyPath: pNumber
-      value: 1
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 7369548044506996763, guid: 2e37873737d00264596234528fb282e4,
         type: 3}
       propertyPath: orientation
-      value: 1
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 7369548044506996763, guid: 2e37873737d00264596234528fb282e4,
         type: 3}
@@ -213,6 +213,26 @@ PrefabInstance:
         type: 3}
       propertyPath: _sensors.Array.data[0]._atkColliders
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7369548044506996763, guid: 2e37873737d00264596234528fb282e4,
+        type: 3}
+      propertyPath: moveSpeed
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 7369548044506996763, guid: 2e37873737d00264596234528fb282e4,
+        type: 3}
+      propertyPath: jumpSpeed
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 7369548044506996763, guid: 2e37873737d00264596234528fb282e4,
+        type: 3}
+      propertyPath: airjumpSpeed
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 7369548044506996763, guid: 2e37873737d00264596234528fb282e4,
+        type: 3}
+      propertyPath: fallSpeed
+      value: 100
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2e37873737d00264596234528fb282e4, type: 3}
@@ -236,7 +256,7 @@ Rigidbody:
   m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 126
   m_CollisionDetection: 0
 --- !u!64 &219048350
 MeshCollider:
@@ -249,9 +269,9 @@ MeshCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Convex: 1
+  m_Convex: 0
   m_CookingOptions: 14
-  m_Mesh: {fileID: 0}
+  m_Mesh: {fileID: 4300002, guid: 48646a3059301fb4693d817b6151cf82, type: 3}
 --- !u!1 &315561603
 GameObject:
   m_ObjectHideFlags: 0
@@ -566,6 +586,26 @@ PrefabInstance:
         type: 3}
       propertyPath: orientation
       value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7369548044506996763, guid: 2e37873737d00264596234528fb282e4,
+        type: 3}
+      propertyPath: moveSpeed
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 7369548044506996763, guid: 2e37873737d00264596234528fb282e4,
+        type: 3}
+      propertyPath: jumpSpeed
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 7369548044506996763, guid: 2e37873737d00264596234528fb282e4,
+        type: 3}
+      propertyPath: airjumpSpeed
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 7369548044506996763, guid: 2e37873737d00264596234528fb282e4,
+        type: 3}
+      propertyPath: fallSpeed
+      value: 100
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2e37873737d00264596234528fb282e4, type: 3}

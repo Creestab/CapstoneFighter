@@ -4,37 +4,35 @@ using UnityEngine;
 
 public class sCollisionStateController : StateMachineBehaviour
 {
-    [SerializeField] sSensor.ColliderState _tempCollider;
     [SerializeField] sPlayer.enumMoves _moveType;
     float[,] _fData;
     float _animLength;
-
-
+    int numHB;
 
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-
         _fData = animator.gameObject.GetComponent<sPlayer>().GetPlayerMoves[_moveType];
         _animLength = _fData[0, 1];
+        numHB = _fData.GetLength(0);
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        bool active = false;
-        int hit = 1;
-        if (stateInfo.normalizedTime >= _fData[1,0] / _animLength && stateInfo.normalizedTime < _fData[1,1] / _animLength)
+        for(int i = 1; i < numHB; i++)
         {
-            if(!active) { active = true; }
-            animator.gameObject.GetComponent<sPlayer>().GetPlayerSensors.Find(
-                x => x.GetAtkColliders == _moveType).GetSensors.GetColliderState = sSensor.ColliderState.HitBox;
-        }
-        else
-        {
-            if(active) { active = false; }
-            animator.gameObject.GetComponent<sPlayer>().GetPlayerSensors.Find(
-                x => x.GetAtkColliders == _moveType).GetSensors.GetColliderState = sSensor.ColliderState.None;
+            if (stateInfo.normalizedTime >= _fData[i, 0] / _animLength && stateInfo.normalizedTime < _fData[i, 1] / _animLength)
+            {
+                animator.gameObject.GetComponent<sPlayer>().GetPlayerSensors.Find(
+                    x => x.GetAtkType == _moveType).GetSensors[i].GetColliderState = sSensor.ColliderState.HitBox;
+
+            }
+            else
+            {
+                animator.gameObject.GetComponent<sPlayer>().GetPlayerSensors.Find(
+                    x => x.GetAtkType == _moveType).GetSensors[i].GetColliderState = sSensor.ColliderState.None;
+            }
         }
     }
 
