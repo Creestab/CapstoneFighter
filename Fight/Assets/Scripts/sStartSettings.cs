@@ -12,7 +12,7 @@ public class sStartSettings : MonoBehaviour
 
     }
 
-    private void Update()
+    void Update()
     {
         
     }

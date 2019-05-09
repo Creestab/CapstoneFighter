@@ -30,14 +30,15 @@ public class sSensor : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.GetComponent<sSensor>().GetColliderState == ColliderState.HitBox)
+        if (_instance == ColliderState.HurtBox)
         {
-            var tempScript = other.GetComponent<sSensor>();
-            if (_parent != tempScript.GetParent)
+            if (other.gameObject.GetComponent<sPlayer>() != null)
             {
-                /*Debug.Log(_parent.name);
-                Debug.Log(other.name);
-                Debug.Log(this.name);*/
+                if (other.gameObject.GetComponent<sSensor>().GetColliderState == ColliderState.HitBox)
+                {
+                    //Process hit
+
+                }
             }
         }
     }

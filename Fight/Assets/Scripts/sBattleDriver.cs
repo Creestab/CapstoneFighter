@@ -90,14 +90,21 @@ public class sBattleDriver : MonoBehaviour
 
         p1 = Instantiate(Player, p1Spawn, Quaternion.Euler(0, 0, 0));
         p1.GetComponent<Renderer>().material.color = player1Color;
-        p1.GetComponent<sInput>().SetControls(player1Controls);
-        p1.GetComponent<sPlayer>().SetPlayerMoves(player1Moveset);
+
         p1.GetComponent<sPlayer>().pNumber = 1;
         p1.GetComponent<sPlayer>().moveSpeed = 100;
         p1.GetComponent<sPlayer>().jumpSpeed = 100;
         p1.GetComponent<sPlayer>().airjumpSpeed = 100;
         p1.GetComponent<sPlayer>().maxJumps = 2;
         p1.GetComponent<sPlayer>().orientation = 1;
+        p1.GetComponent<sPlayer>().SetPlayerMoves(player1Moveset);
+        p1.GetComponent<sPlayer>().SetControlProfile(player1Controls);
+
+        //p1.GetComponent<sInput>().SetControls();
+
+        //Print Player 1 state on creation
+        Debug.Log(p1.GetComponent<sPlayer>().ToString());
+        Debug.Log(p1.GetComponent<sInput>().ToString());
 
         StopCoroutine("SpawnP1");
     }
@@ -109,14 +116,20 @@ public class sBattleDriver : MonoBehaviour
 
         p2 = Instantiate(Player, p2Spawn, Quaternion.Euler(0, 0, 0));
         p2.GetComponent<Renderer>().material.color = player2Color;
-        p2.GetComponent<sInput>().SetControls(player2Controls);
-        p2.GetComponent<sPlayer>().SetPlayerMoves(player2Moveset);
+
         p2.GetComponent<sPlayer>().pNumber = 2;
         p2.GetComponent<sPlayer>().moveSpeed = 100;
         p2.GetComponent<sPlayer>().jumpSpeed = 100;
         p2.GetComponent<sPlayer>().airjumpSpeed = 100;
         p2.GetComponent<sPlayer>().maxJumps = 2;
         p2.GetComponent<sPlayer>().orientation = -1;
+        p2.GetComponent<sPlayer>().SetPlayerMoves(player2Moveset);
+
+        //p2.GetComponent<sInput>().SetControls(player2Controls);
+
+        //Print Player 2 state on creation
+        //Debug.Log(p2.GetComponent<sPlayer>().ToString());
+        //Debug.Log(p2.GetComponent<sInput>().ToString());
 
         StopCoroutine("SpawnP2");
     }
