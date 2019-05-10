@@ -62,15 +62,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\sBattleDriver.cs" />
-    <Compile Include="Assets\Scripts\sCollisionStateController.cs" />
+    <Compile Include="Assets\Scripts\sData.cs" />
     <Compile Include="Assets\Scripts\sGameDriver.cs" />
+    <Compile Include="Assets\Scripts\sHitBoxController.cs" />
     <Compile Include="Assets\Scripts\sInput.cs" />
-    <Compile Include="Assets\Scripts\sMoveData.cs" />
     <Compile Include="Assets\Scripts\sPlayer.cs" />
     <Compile Include="Assets\Scripts\sSensor.cs" />
     <Compile Include="Assets\Scripts\sStartSettings.cs" />
-    <Compile Include="Assets\Text\sUtil.cs" />
     <None Include="Assets\Text\Keyboard_Default.txt" />
+    <None Include="Assets\Text\XBOne_Default.txt" />
     <None Include="Assets\Text\Moveset_Default.txt" />
     <None Include="Assets\Text\GCC2_Default.txt" />
     <None Include="Assets\Text\GCC1_Default.txt" />

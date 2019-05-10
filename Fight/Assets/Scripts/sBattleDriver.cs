@@ -62,7 +62,10 @@ public class sBattleDriver : MonoBehaviour
     {
         frame++;
         UpdateGUI();
+    }
 
+    private void LateUpdate()
+    {
         //DEBUGGING
         if(Input.GetKeyDown(KeyCode.LeftControl))
         {

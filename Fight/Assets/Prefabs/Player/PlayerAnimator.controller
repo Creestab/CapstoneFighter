@@ -34,7 +34,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c4530d28aeb1e9418593058b979adb6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _tempCollider: 0
   _moveType: 2
 --- !u!206 &206122253845243970
 BlendTree:
@@ -532,7 +531,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: AirJump
-  m_Speed: 1
+  m_Speed: 0.5
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: 1101463878192365396}

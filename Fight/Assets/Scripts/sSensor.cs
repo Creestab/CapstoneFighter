@@ -4,15 +4,20 @@ using UnityEngine;
 
 public class sSensor : MonoBehaviour
 {
-    [SerializeField] sUtil.ColliderState _type;
     [SerializeField] GameObject _player;
-    [SerializeField] string _move;
+    [SerializeField] sData.ColliderState _type;
+    [SerializeField] string _moveName;
+    [SerializeField] int _hitNum;
+    float[,] moveData;
 
     Vector3 pos;
     Quaternion rot;
 
     void Start()
     {
+        if (_type == sData.ColliderState.HurtBox) { _moveName = null; _hitNum = 0; moveData = null; }
+        else moveData = sData.GetMove(_moveName);
+
         pos = transform.localPosition;
         rot = transform.localRotation;
     }
@@ -23,27 +28,32 @@ public class sSensor : MonoBehaviour
         transform.localRotation = rot;
     }
 
-    public sUtil.ColliderState GetColliderType
+    public sData.ColliderState GetColliderType
     {
         get { return _type; }
         set { _type = value; }
     }
-    public GameObject GetPlayer
-    {
-        get { return _player; }
-    }
-    public string GetMove
-    {
-        get { return _move; }
-    }
+    public float[,] GetMoveData { get { return moveData; } }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (_type == sUtil.ColliderState.HurtBox)
+        if (_type == sData.ColliderState.HurtBox)
         {
-            if (other.material.name == "pmHitbox" && other.GetComponent<sSensor>().GetColliderType == sUtil.ColliderState.HitBox)
-            {
+            if (other.material.name == "pmHitbox" && other.GetComponent<sSensor>().GetColliderType == sData.ColliderState.HitBox)
+            {                
                 //Process hit
+                sSensor hit = other.GetComponent<sSensor>();
+                sPlayer plr = _player.GetComponent<sPlayer>();
+                sPlayer opp = hit._player.GetComponent<sPlayer>();
+
+                //Damage
+                plr.ModDamage(moveData[hit._hitNum, 2]);
+                Debug.Log("Player " + plr.pNumber + " takes " + moveData[hit._hitNum, 2] + " damage from Player " + opp.pNumber + "'s " + hit._moveName);
+
+                //Hitstun
+
+
+                //Knockback
 
             }
         }
@@ -51,7 +61,7 @@ public class sSensor : MonoBehaviour
 
     private void OnTriggerStay(Collider other)
     {
-        if (_type == sUtil.ColliderState.HurtBox)
+        if (_type == sData.ColliderState.HurtBox)
         {
             if (other.material.name.Contains("pmWall") && !_player.GetComponent<sPlayer>().OnStage())
             {
