@@ -927,7 +927,7 @@ SkinnedMeshRenderer:
   m_BlendShapeWeights: []
   m_RootBone: {fileID: 2237681876990465973}
   m_AABB:
-    m_Center: {x: -0.1025753, y: -0.3874367, z: 0.013400078}
+    m_Center: {x: -0, y: 0, z: 0}
     m_Extent: {x: 5.485982, y: 1.9641907, z: 5.1887035}
   m_DirtyAABB: 0
 --- !u!1 &8908479649163908288
@@ -1001,9 +1001,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8751689906622573144}
-  - component: {fileID: 5975999388802473011}
   - component: {fileID: 6374429353846171836}
-  - component: {fileID: 5021908797257786046}
+  - component: {fileID: 8410460263787007988}
+  - component: {fileID: 3138792539296245488}
+  - component: {fileID: 5975999388802473011}
   - component: {fileID: 7369548044506996763}
   - component: {fileID: 5562589085949743872}
   m_Layer: 0
@@ -1029,25 +1030,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!95 &5975999388802473011
-Animator:
-  serializedVersion: 3
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9044763036549695072}
-  m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: 284f1fbba1c4ebf4d97730b5ce13d289, type: 3}
-  m_Controller: {fileID: 9100000, guid: f0936db77a97d1e46a2bf9f10416345d, type: 2}
-  m_CullingMode: 1
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 1
-  m_LinearVelocityBlending: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!23 &6374429353846171836
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1085,7 +1067,20 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!54 &5021908797257786046
+--- !u!65 &8410460263787007988
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9044763036549695072}
+  m_Material: {fileID: 13400000, guid: aabfdd524999abf4181b6be3736114a3, type: 2}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 2.5, y: 10.8, z: 5}
+  m_Center: {x: 0, y: 5.4, z: 0}
+--- !u!54 &3138792539296245488
 Rigidbody:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1094,13 +1089,32 @@ Rigidbody:
   m_GameObject: {fileID: 9044763036549695072}
   serializedVersion: 2
   m_Mass: 1
-  m_Drag: 1
-  m_AngularDrag: 1
+  m_Drag: 0
+  m_AngularDrag: 0
   m_UseGravity: 0
   m_IsKinematic: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_Constraints: 8
   m_CollisionDetection: 3
+--- !u!95 &5975999388802473011
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9044763036549695072}
+  m_Enabled: 1
+  m_Avatar: {fileID: 9000000, guid: 284f1fbba1c4ebf4d97730b5ce13d289, type: 3}
+  m_Controller: {fileID: 9100000, guid: f0936db77a97d1e46a2bf9f10416345d, type: 2}
+  m_CullingMode: 1
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 1
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!114 &7369548044506996763
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1118,14 +1132,15 @@ MonoBehaviour:
   - _sensors:
     - {fileID: 4500759357559119383}
     _atkType: 2
-  ctrlProfile: {fileID: 4900000, guid: e5f750112d1958e40832336a4367b8c7, type: 3}
-  orientation: 0
+  ctrlProfile: Keyboard_Default
+  orientation: 1
   maxJumps: 2
   pNumber: 0
+  pColor: {r: 1, g: 1, b: 1, a: 0}
   moveSpeed: 100
   jumpSpeed: 100
   airjumpSpeed: 100
-  fallSpeed: 100
+  fallSpeed: 10
 --- !u!114 &5562589085949743872
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1319,6 +1334,21 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8251717060923009012, guid: ffcb3d47649b8dc4088ba7acdf3d4fcd,
+        type: 3}
+      propertyPath: m_IsKinematic
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8251717060923009012, guid: ffcb3d47649b8dc4088ba7acdf3d4fcd,
+        type: 3}
+      propertyPath: m_Interpolate
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8251717060923009012, guid: ffcb3d47649b8dc4088ba7acdf3d4fcd,
+        type: 3}
+      propertyPath: m_CollisionDetection
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 2001083072381058484, guid: ffcb3d47649b8dc4088ba7acdf3d4fcd,
         type: 3}
@@ -2090,6 +2120,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: -3
       objectReference: {fileID: 0}
+    - target: {fileID: 8251717060923009012, guid: ffcb3d47649b8dc4088ba7acdf3d4fcd,
+        type: 3}
+      propertyPath: m_CollisionDetection
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 2001083072381058484, guid: ffcb3d47649b8dc4088ba7acdf3d4fcd,
         type: 3}
       propertyPath: _instance
@@ -2268,6 +2303,11 @@ PrefabInstance:
     - target: {fileID: 2701890553663676882, guid: 3f651060aeb12e3429baf87675319c22,
         type: 3}
       propertyPath: m_Direction
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2701890553663676882, guid: 3f651060aeb12e3429baf87675319c22,
+        type: 3}
+      propertyPath: m_IsTrigger
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9210869641475357624, guid: 3f651060aeb12e3429baf87675319c22,
@@ -2626,6 +2666,21 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8251717060923009012, guid: ffcb3d47649b8dc4088ba7acdf3d4fcd,
+        type: 3}
+      propertyPath: m_IsKinematic
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8251717060923009012, guid: ffcb3d47649b8dc4088ba7acdf3d4fcd,
+        type: 3}
+      propertyPath: m_CollisionDetection
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 8251717060923009012, guid: ffcb3d47649b8dc4088ba7acdf3d4fcd,
+        type: 3}
+      propertyPath: m_Interpolate
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2001083072381058484, guid: ffcb3d47649b8dc4088ba7acdf3d4fcd,
         type: 3}

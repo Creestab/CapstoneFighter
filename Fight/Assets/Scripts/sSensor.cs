@@ -4,42 +4,34 @@ using UnityEngine;
 
 public class sSensor : MonoBehaviour
 {
-    public enum ColliderState
-    {
-        None,
-        HitBox,
-        HurtBox
-    };
-
     void Start()
     {
 
     }
 
-    [SerializeField] ColliderState _instance;
-    [SerializeField] Transform _parent;
-    public ColliderState GetColliderState
+    [SerializeField] sUtil.ColliderState _type;
+    [SerializeField] GameObject _player;
+    [SerializeField] string _move;
+
+    public sUtil.ColliderState GetColliderType
     {
-        get { return _instance; }
-        set { _instance = value; }
+        get { return _type; }
+        set { _type = value; }
     }
-    public Transform GetParent
+    public GameObject GetPlayer
     {
-        get { return _parent; }
+        get { return _player; }
+    }
+    public string GetMove
+    {
+        get { return _move; }
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (_instance == ColliderState.HurtBox)
+        if (_type == sUtil.ColliderState.HurtBox && other.gameObject.GetComponent<sSensor>().GetColliderType == sUtil.ColliderState.HitBox)
         {
-            if (other.gameObject.GetComponent<sPlayer>() != null)
-            {
-                if (other.gameObject.GetComponent<sSensor>().GetColliderState == ColliderState.HitBox)
-                {
-                    //Process hit
-
-                }
-            }
+            //Process hit
         }
     }
 }

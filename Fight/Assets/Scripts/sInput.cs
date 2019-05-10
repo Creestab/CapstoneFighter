@@ -1,83 +1,29 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.IO;
 
 public class sInput : MonoBehaviour
-{
-    public enum InputAction { Move, Light, Heavy, Special, Block, Grab, Jump, Alt, Pause };
-    public struct ControlScheme
-    {
-        public int buffer;
-        public string moveHorz;
-        public string moveVert;
-        public InputAction rStickUse;
-        public string rHorz;
-        public string rVert;
-        public KeyCode left;
-        public KeyCode right;
-        public KeyCode up;
-        public KeyCode down;
-        public KeyCode light;
-        public KeyCode heavy;
-        public float lightToHeavy; //Threshold for light attack inputs to register as heavy. Values over 1 disable this.
-        public KeyCode special;
-        public KeyCode block;
-        public KeyCode grab;
-        public KeyCode jump;
-        public KeyCode alt;
-        public KeyCode pause;
-
-        public override string ToString()
-        {
-            string s=
-                "Input Buffer: " + buffer + '\n' +
-                "Movement Axis (Horizonal): " + moveHorz + '\n' +
-                "Movement Axis (Vertical): " + moveVert + '\n' +
-                "Misc Axis (Horizontal): " + rHorz + '\n' +
-                "Misc Axis (Vertical): " + rVert + '\n' +
-                "Misc Axis Use: " + rStickUse + '\n' +
-                "Binary Movement: " + '\n' + "   Left: " + left + "   Right: " + right + "   Up: " + up + "   Down: " + down + '\n' +
-                "Light Attack: " + light + '\n' +
-                "Heavy Attack: " + heavy + '\n' +
-                "Light Input to Heavy Attack Threshold: " + lightToHeavy + '\n' +
-                "Special: " + special + '\n' +
-                "Block: " + block + '\n' +
-                "Grab: " + grab + '\n' +
-                "Jump: " + jump + '\n' +
-                "Alter Input: " + alt + '\n' +
-                "Pause: " + pause + '\n';
-
-            return s;
-        }
-    }
-
+{ 
     sPlayer pChar;
-    ControlScheme controls;
+    sUtil.ControlScheme controls;
 
-    sPlayer.enumMoves qInput;
+    sUtil.MoveType qInput;
     int xBuf;
     bool forceHeavy;
-
-    int debugFrames;
 
     // Start is called before the first frame update
     void Start()
     {
-        pChar = gameObject.GetComponent<sPlayer>();
-        qInput = sPlayer.enumMoves.none;
+        qInput = sUtil.MoveType.none;
         xBuf = 0;
         forceHeavy = false;
 
+        Refresh();
         ResetBuffer();
-
-        Debug.Log(debugFrames = 0);
     }
 
     private void Update()
     {
-        debugFrames++;
-
         //Debug analog sticks
         /*if (Input.GetKeyDown(controls.alt)) { Debug.Log("Printing axis values..."); }
         if (Input.GetKeyDown(controls.alt))
@@ -93,7 +39,7 @@ public class sInput : MonoBehaviour
         }*/
 
         //Clear buffered actions
-        if (qInput != sPlayer.enumMoves.none)
+        if (qInput != sUtil.MoveType.none)
         {
             if (xBuf <= 0)
             {
@@ -102,7 +48,7 @@ public class sInput : MonoBehaviour
             }
             else { xBuf--; }
         }
-        sPlayer.enumMoves qTemp = qInput;
+        sUtil.MoveType qTemp = qInput;
         
         ////////////////
         //Input buffer//
@@ -115,34 +61,34 @@ public class sInput : MonoBehaviour
             if (!pChar.IsAirborne())
             {
                 //Is the player inputting a light attack?
-                if (Input.GetKeyDown(controls.light) || (controls.rStickUse == InputAction.Light && (Input.GetAxis(controls.rHorz) != 0 || Input.GetAxis(controls.rVert) != 0)))
+                if (Input.GetKeyDown(controls.light) || (controls.rStickUse == sUtil.InputAction.Light && (Input.GetAxis(controls.rHorz) != 0 || Input.GetAxis(controls.rVert) != 0)))
                 {
                     //Is it a shield grab?
                     if (Input.GetKey(controls.block))
                     {
-                        qInput = sPlayer.enumMoves.grab;
+                        qInput = sUtil.MoveType.grab;
                     }
                     //Handling of right stick input
-                    else if (controls.rStickUse == InputAction.Light && (Input.GetAxis(controls.rHorz) != 0 || Input.GetAxis(controls.rVert) != 0))
+                    else if (controls.rStickUse == sUtil.InputAction.Light && (Input.GetAxis(controls.rHorz) != 0 || Input.GetAxis(controls.rVert) != 0))
                     {
                         //What type of light?
                         if (Mathf.Abs(Input.GetAxis(controls.rHorz)) > Mathf.Abs(Input.GetAxis(controls.rVert)))
                         {
                             //Forward light
-                            if (Input.GetAxis(controls.rHorz) > 0) { qInput = sPlayer.enumMoves.fLight; }
+                            if (Input.GetAxis(controls.rHorz) > 0) { qInput = sUtil.MoveType.fLight; }
                             //Pivot Forward light
                             else
                             {
                                 pChar.orientation = -pChar.orientation;
-                                qInput = sPlayer.enumMoves.fLight;
+                                qInput = sUtil.MoveType.fLight;
                             }
                         }
                         else
                         {
                             //Up light
-                            if (Input.GetAxis(controls.rVert) > 0) { qInput = sPlayer.enumMoves.uLight; }
+                            if (Input.GetAxis(controls.rVert) > 0) { qInput = sUtil.MoveType.uLight; }
                             //Down light
-                            else { qInput = sPlayer.enumMoves.dLight; }
+                            else { qInput = sUtil.MoveType.dLight; }
                         }
                     }
                     //Is it a below the heavy attack threshold?
@@ -155,25 +101,25 @@ public class sInput : MonoBehaviour
                             if (Mathf.Abs(Input.GetAxis(controls.moveHorz)) > Mathf.Abs(Input.GetAxis(controls.moveVert)))
                             {
                                 //Forward light
-                                if (Input.GetAxis(controls.moveHorz) > 0) { qInput = sPlayer.enumMoves.fLight; }
+                                if (Input.GetAxis(controls.moveHorz) > 0) { qInput = sUtil.MoveType.fLight; }
                                 //Pivot Forward light
                                 else
                                 {
                                     pChar.orientation = -pChar.orientation;
-                                    qInput = sPlayer.enumMoves.fLight;
+                                    qInput = sUtil.MoveType.fLight;
                                 }
                             }
                             else
                             {
                                 //Up light
-                                if (Input.GetAxis(controls.moveVert) > 0) { qInput = sPlayer.enumMoves.uLight; }
+                                if (Input.GetAxis(controls.moveVert) > 0) { qInput = sUtil.MoveType.uLight; }
                                 //Down light
-                                else { qInput = sPlayer.enumMoves.dLight; }
+                                else { qInput = sUtil.MoveType.dLight; }
                             }
                         }
                         else//Its a jab
                         {
-                            qInput = sPlayer.enumMoves.jab;
+                            qInput = sUtil.MoveType.jab;
                         }
                     }
                     else
@@ -185,10 +131,10 @@ public class sInput : MonoBehaviour
                 else if (Input.GetKeyDown(controls.block))
                 {
                     //Roll right
-                    if (Input.GetAxis(controls.moveHorz) > .5) { qInput = sPlayer.enumMoves.fRoll; }
+                    if (Input.GetAxis(controls.moveHorz) > .5) { qInput = sUtil.MoveType.fRoll; }
                     //Roll left
-                    else if (Input.GetAxis(controls.moveHorz) < -.5) { qInput = sPlayer.enumMoves.bRoll; }
-                    else if (Input.GetAxis(controls.moveVert) < -.5) { qInput = sPlayer.enumMoves.dodge; }
+                    else if (Input.GetAxis(controls.moveHorz) < -.5) { qInput = sUtil.MoveType.bRoll; }
+                    else if (Input.GetAxis(controls.moveVert) < -.5) { qInput = sUtil.MoveType.dodge; }
                 }
                 //Is the player inputting a special?
                 else if (Input.GetKeyDown(controls.special))
@@ -200,12 +146,12 @@ public class sInput : MonoBehaviour
                         if (Mathf.Abs(Input.GetAxis(controls.moveHorz)) > Mathf.Abs(Input.GetAxis(controls.moveVert)))
                         {
                             //Forward special
-                            if (Input.GetAxis(controls.moveHorz) > 0) { qInput = sPlayer.enumMoves.fSpec; }
+                            if (Input.GetAxis(controls.moveHorz) > 0) { qInput = sUtil.MoveType.fSpec; }
                             //Pivot Forward special
                             else
                             {
                                 pChar.orientation = -pChar.orientation;
-                                qInput = sPlayer.enumMoves.fSpec;
+                                qInput = sUtil.MoveType.fSpec;
                             }
                         }
                         else
@@ -214,18 +160,18 @@ public class sInput : MonoBehaviour
                             if (Input.GetAxis(controls.moveVert) > 0)
                             {
                                 if (Input.GetAxis(controls.moveHorz) < -.1) { pChar.orientation = -pChar.orientation; }
-                                qInput = sPlayer.enumMoves.uSpec;
+                                qInput = sUtil.MoveType.uSpec;
                             }
                             //Down special
-                            else { qInput = sPlayer.enumMoves.dSpec; }
+                            else { qInput = sUtil.MoveType.dSpec; }
                         }
                     }
                     else //Its a neutral special
                     {
-                        qInput = sPlayer.enumMoves.nSpec;
+                        qInput = sUtil.MoveType.nSpec;
                     }
                 }
-                else if (forceHeavy || Input.GetKeyDown(controls.heavy) || (controls.rStickUse == InputAction.Heavy && (Input.GetAxis(controls.rHorz) != 0 || Input.GetAxis(controls.rVert) != 0)))
+                else if (forceHeavy || Input.GetKeyDown(controls.heavy) || (controls.rStickUse == sUtil.InputAction.Heavy && (Input.GetAxis(controls.rHorz) != 0 || Input.GetAxis(controls.rVert) != 0)))
                 {
                     //Is it non-directional?
                     if ((Input.GetKeyDown(controls.heavy) || forceHeavy) && (Input.GetAxis(controls.moveHorz) != 0 || Input.GetAxis(controls.moveVert) != 0))
@@ -234,77 +180,77 @@ public class sInput : MonoBehaviour
                         if (Mathf.Abs(Input.GetAxis(controls.moveHorz)) > Mathf.Abs(Input.GetAxis(controls.moveVert)))
                         {
                             //Forward strong
-                            if (Input.GetAxis(controls.moveHorz) > 0) { qInput = sPlayer.enumMoves.fStrong; }
+                            if (Input.GetAxis(controls.moveHorz) > 0) { qInput = sUtil.MoveType.fStrong; }
                             //Pivot Forward strong
                             else
                             {
                                 pChar.orientation = -pChar.orientation;
-                                qInput = sPlayer.enumMoves.fStrong;
+                                qInput = sUtil.MoveType.fStrong;
                             }
                         }
                         else
                         {
                             //Up strong
-                            if (Input.GetAxis(controls.moveVert) > 0) { qInput = sPlayer.enumMoves.uStrong; }
+                            if (Input.GetAxis(controls.moveVert) > 0) { qInput = sUtil.MoveType.uStrong; }
                             //Down strong
-                            else { qInput = sPlayer.enumMoves.dStrong; }
+                            else { qInput = sUtil.MoveType.dStrong; }
                         }
                     }
                     //Handling of c-stick input
-                    else if (controls.rStickUse == InputAction.Heavy && (Input.GetAxis(controls.rHorz) != 0 || Input.GetAxis(controls.rVert) != 0))
+                    else if (controls.rStickUse == sUtil.InputAction.Heavy && (Input.GetAxis(controls.rHorz) != 0 || Input.GetAxis(controls.rVert) != 0))
                     {
                         //What type of strong?
                         if (Mathf.Abs(Input.GetAxis(controls.rHorz)) > Mathf.Abs(Input.GetAxis(controls.rVert)))
                         {
                             //Forward strong
-                            if (Input.GetAxis(controls.rHorz) > 0) { qInput = sPlayer.enumMoves.fStrong; }
+                            if (Input.GetAxis(controls.rHorz) > 0) { qInput = sUtil.MoveType.fStrong; }
                             //Pivot Forward strong
                             else
                             {
                                 pChar.orientation = -pChar.orientation;
-                                qInput = sPlayer.enumMoves.fStrong;
+                                qInput = sUtil.MoveType.fStrong;
                             }
                         }
                         else
                         {
                             //Up strong
-                            if (Input.GetAxis(controls.rVert) > 0) { qInput = sPlayer.enumMoves.uStrong; }
+                            if (Input.GetAxis(controls.rVert) > 0) { qInput = sUtil.MoveType.uStrong; }
                             //Down strong
-                            else { qInput = sPlayer.enumMoves.dStrong; }
+                            else { qInput = sUtil.MoveType.dStrong; }
                         }
                     }
                     else //Dedicated strong button with no direction, default to forward strong
                     {
-                        qInput = sPlayer.enumMoves.fStrong;
+                        qInput = sUtil.MoveType.fStrong;
                     }
                 }
-                else if (Input.GetKeyDown(controls.grab)) { qInput = sPlayer.enumMoves.grab; }
-                else if (Input.GetKeyDown(controls.jump)) { qInput = sPlayer.enumMoves.jump; }
+                else if (Input.GetKeyDown(controls.grab)) { qInput = sUtil.MoveType.grab; }
+                else if (Input.GetKeyDown(controls.jump)) { qInput = sUtil.MoveType.jump; }
             }
             //The player is airborne
             else
             {
                 //Is the player inputting an attack?
                 if (Input.GetKeyDown(controls.light) || Input.GetKeyDown(controls.heavy) ||
-                    ((controls.rStickUse == InputAction.Light || controls.rStickUse == InputAction.Heavy) && (Input.GetAxis(controls.rHorz) != 0 || Input.GetAxis(controls.rVert) != 0)))
+                    ((controls.rStickUse == sUtil.InputAction.Light || controls.rStickUse == sUtil.InputAction.Heavy) && (Input.GetAxis(controls.rHorz) != 0 || Input.GetAxis(controls.rVert) != 0)))
                 {
                     //Handling of right stick input
-                    if ((controls.rStickUse == InputAction.Light || controls.rStickUse == InputAction.Heavy) && (Input.GetAxis(controls.rHorz) != 0 || Input.GetAxis(controls.rVert) != 0))
+                    if ((controls.rStickUse == sUtil.InputAction.Light || controls.rStickUse == sUtil.InputAction.Heavy) && (Input.GetAxis(controls.rHorz) != 0 || Input.GetAxis(controls.rVert) != 0))
                     {
                         //What type of aerial?
                         if (Mathf.Abs(Input.GetAxis(controls.rHorz)) > Mathf.Abs(Input.GetAxis(controls.rVert)))
                         {
                             //Forward air
-                            if (Input.GetAxis(controls.rHorz) > 0) { qInput = sPlayer.enumMoves.fAir; }
+                            if (Input.GetAxis(controls.rHorz) > 0) { qInput = sUtil.MoveType.fAir; }
                             //Back air
-                            else { qInput = sPlayer.enumMoves.bAir; }
+                            else { qInput = sUtil.MoveType.bAir; }
                         }
                         else
                         {
                             //Up air
-                            if (Input.GetAxis(controls.rVert) > 0) { qInput = sPlayer.enumMoves.uAir; }
+                            if (Input.GetAxis(controls.rVert) > 0) { qInput = sUtil.MoveType.uAir; }
                             //Down air
-                            else { qInput = sPlayer.enumMoves.dAir; }
+                            else { qInput = sUtil.MoveType.dAir; }
                         }
                     }
                     //Is it not a neautral air?
@@ -314,21 +260,21 @@ public class sInput : MonoBehaviour
                         if (Mathf.Abs(Input.GetAxis(controls.moveHorz)) > Mathf.Abs(Input.GetAxis(controls.moveVert)))
                         {
                             //Forward air
-                            if (Input.GetAxis(controls.moveHorz) > 0) { qInput = sPlayer.enumMoves.fAir; }
+                            if (Input.GetAxis(controls.moveHorz) > 0) { qInput = sUtil.MoveType.fAir; }
                             //back air
-                            else { qInput = sPlayer.enumMoves.bAir; }
+                            else { qInput = sUtil.MoveType.bAir; }
                         }
                         else
                         {
                             //Up air
-                            if (Input.GetAxis(controls.moveVert) > 0) { qInput = sPlayer.enumMoves.uAir; }
+                            if (Input.GetAxis(controls.moveVert) > 0) { qInput = sUtil.MoveType.uAir; }
                             //Down light
-                            else { qInput = sPlayer.enumMoves.dAir; }
+                            else { qInput = sUtil.MoveType.dAir; }
                         }
                     }
                     else if (Input.GetKeyDown(controls.light) || Input.GetKeyDown(controls.heavy))//Its it a nair
                     {
-                        qInput = sPlayer.enumMoves.nAir;
+                        qInput = sUtil.MoveType.nAir;
                     }
                 }
                 //Is the player inputting airdoge/tech?
@@ -338,16 +284,16 @@ public class sInput : MonoBehaviour
                     if (Mathf.Abs(Input.GetAxis(controls.moveHorz)) > Mathf.Abs(Input.GetAxis(controls.moveVert)))
                     {
                         //Tech Forward Roll
-                        if (Input.GetAxis(controls.moveHorz) > 0) { qInput = sPlayer.enumMoves.fRoll; }
+                        if (Input.GetAxis(controls.moveHorz) > 0) { qInput = sUtil.MoveType.fRoll; }
                         //Tech Backward Roll
-                        else { qInput = sPlayer.enumMoves.bRoll; }
+                        else { qInput = sUtil.MoveType.bRoll; }
                     }
                     else
                     {
                         //Tech hop
-                        if (Input.GetAxis(controls.moveVert) > 0) { qInput = sPlayer.enumMoves.techHop; }
+                        if (Input.GetAxis(controls.moveVert) > 0) { qInput = sUtil.MoveType.techHop; }
                         //Default to normal tech
-                        else { qInput = sPlayer.enumMoves.tech; }
+                        else { qInput = sUtil.MoveType.tech; }
                     }
                 }
                 //Is the player inputting a special?
@@ -360,12 +306,12 @@ public class sInput : MonoBehaviour
                         if (Mathf.Abs(Input.GetAxis(controls.moveHorz)) > Mathf.Abs(Input.GetAxis(controls.moveVert)))
                         {
                             //Forward special
-                            if (Input.GetAxis(controls.moveHorz) > 0) { qInput = sPlayer.enumMoves.fSpec; }
+                            if (Input.GetAxis(controls.moveHorz) > 0) { qInput = sUtil.MoveType.fSpec; }
                             //Pivot Forward special
                             else
                             {
                                 pChar.orientation = -pChar.orientation;
-                                qInput = sPlayer.enumMoves.fSpec;
+                                qInput = sUtil.MoveType.fSpec;
                             }
                         }
                         else
@@ -374,18 +320,18 @@ public class sInput : MonoBehaviour
                             if (Input.GetAxis(controls.moveVert) > 0)
                             {
                                 if (Input.GetAxis(controls.moveHorz) < -.1) { pChar.orientation = -pChar.orientation; }
-                                qInput = sPlayer.enumMoves.uSpec;
+                                qInput = sUtil.MoveType.uSpec;
                             }
                             //Down special
-                            else { qInput = sPlayer.enumMoves.dSpec; }
+                            else { qInput = sUtil.MoveType.dSpec; }
                         }
                     }
                     else //Its a neutral special
                     {
-                        qInput = sPlayer.enumMoves.nSpec;
+                        qInput = sUtil.MoveType.nSpec;
                     }
                 }
-                else if (Input.GetKeyDown(controls.jump) && pChar.CanJump()) { qInput = sPlayer.enumMoves.jump; }
+                else if (Input.GetKeyDown(controls.jump) && pChar.CanJump()) { qInput = sUtil.MoveType.jump; }
             }
         }
         //The player is facing left
@@ -395,34 +341,34 @@ public class sInput : MonoBehaviour
             if (!pChar.IsAirborne())
             {
                 //Is the player inputting a light attack?
-                if (Input.GetKeyDown(controls.light) || (controls.rStickUse == InputAction.Light && (Input.GetAxis(controls.rHorz) != 0 || Input.GetAxis(controls.rVert) != 0)))
+                if (Input.GetKeyDown(controls.light) || (controls.rStickUse == sUtil.InputAction.Light && (Input.GetAxis(controls.rHorz) != 0 || Input.GetAxis(controls.rVert) != 0)))
                 {
                     //Is it a shield grab?
                     if (Input.GetKey(controls.block))
                     {
-                        qInput = sPlayer.enumMoves.grab;
+                        qInput = sUtil.MoveType.grab;
                     }
                     //Handling of right stick input
-                    else if (controls.rStickUse == InputAction.Light && (Input.GetAxis(controls.rHorz) != 0 || Input.GetAxis(controls.rVert) != 0))
+                    else if (controls.rStickUse == sUtil.InputAction.Light && (Input.GetAxis(controls.rHorz) != 0 || Input.GetAxis(controls.rVert) != 0))
                     {
                         //What type of light?
                         if (Mathf.Abs(Input.GetAxis(controls.rHorz)) > Mathf.Abs(Input.GetAxis(controls.rVert)))
                         {
                             //Forward light
-                            if (Input.GetAxis(controls.rHorz) < 0) { qInput = sPlayer.enumMoves.fLight; }
+                            if (Input.GetAxis(controls.rHorz) < 0) { qInput = sUtil.MoveType.fLight; }
                             //Pivot Forward light
                             else
                             {
                                 pChar.orientation = -pChar.orientation;
-                                qInput = sPlayer.enumMoves.fLight;
+                                qInput = sUtil.MoveType.fLight;
                             }
                         }
                         else
                         {
                             //Up light
-                            if (Input.GetAxis(controls.rVert) > 0) { qInput = sPlayer.enumMoves.uLight; }
+                            if (Input.GetAxis(controls.rVert) > 0) { qInput = sUtil.MoveType.uLight; }
                             //Down light
-                            else { qInput = sPlayer.enumMoves.dLight; }
+                            else { qInput = sUtil.MoveType.dLight; }
                         }
                     }
                     //Is it a below the heavy attack threshold?
@@ -435,25 +381,25 @@ public class sInput : MonoBehaviour
                             if (Mathf.Abs(Input.GetAxis(controls.moveHorz)) > Mathf.Abs(Input.GetAxis(controls.moveVert)))
                             {
                                 //Forward light
-                                if (Input.GetAxis(controls.moveHorz) < 0) { qInput = sPlayer.enumMoves.fLight; }
+                                if (Input.GetAxis(controls.moveHorz) < 0) { qInput = sUtil.MoveType.fLight; }
                                 //Pivot Forward light
                                 else
                                 {
                                     pChar.orientation = -pChar.orientation;
-                                    qInput = sPlayer.enumMoves.fLight;
+                                    qInput = sUtil.MoveType.fLight;
                                 }
                             }
                             else
                             {
                                 //Up light
-                                if (Input.GetAxis(controls.moveVert) > 0) { qInput = sPlayer.enumMoves.uLight; }
+                                if (Input.GetAxis(controls.moveVert) > 0) { qInput = sUtil.MoveType.uLight; }
                                 //Down light
-                                else { qInput = sPlayer.enumMoves.dLight; }
+                                else { qInput = sUtil.MoveType.dLight; }
                             }
                         }
                         else //Its a jab
                         {
-                            qInput = sPlayer.enumMoves.jab;
+                            qInput = sUtil.MoveType.jab;
                         }
                     }
                     else
@@ -465,10 +411,10 @@ public class sInput : MonoBehaviour
                 else if (Input.GetKeyDown(controls.block))
                 {
                     //Roll right
-                    if (Input.GetAxis(controls.moveHorz) < -.5) { qInput = sPlayer.enumMoves.fRoll; }
+                    if (Input.GetAxis(controls.moveHorz) < -.5) { qInput = sUtil.MoveType.fRoll; }
                     //Roll left
-                    else if (Input.GetAxis(controls.moveHorz) > .5) { qInput = sPlayer.enumMoves.bRoll; }
-                    else if (Input.GetAxis(controls.moveVert) < -.5) { qInput = sPlayer.enumMoves.dodge; }
+                    else if (Input.GetAxis(controls.moveHorz) > .5) { qInput = sUtil.MoveType.bRoll; }
+                    else if (Input.GetAxis(controls.moveVert) < -.5) { qInput = sUtil.MoveType.dodge; }
                 }
                 //Is the player inputting a special?
                 else if (Input.GetKeyDown(controls.special))
@@ -480,12 +426,12 @@ public class sInput : MonoBehaviour
                         if (Mathf.Abs(Input.GetAxis(controls.moveHorz)) > Mathf.Abs(Input.GetAxis(controls.moveVert)))
                         {
                             //Forward special
-                            if (Input.GetAxis(controls.moveHorz) < 0) { qInput = sPlayer.enumMoves.fSpec; }
+                            if (Input.GetAxis(controls.moveHorz) < 0) { qInput = sUtil.MoveType.fSpec; }
                             //Pivot Forward special
                             else
                             {
                                 pChar.orientation = -pChar.orientation;
-                                qInput = sPlayer.enumMoves.fSpec;
+                                qInput = sUtil.MoveType.fSpec;
                             }
                         }
                         else
@@ -494,19 +440,19 @@ public class sInput : MonoBehaviour
                             if (Input.GetAxis(controls.moveVert) > 0)
                             {
                                 if (Input.GetAxis(controls.moveHorz) > .1) { pChar.orientation = -pChar.orientation; }
-                                qInput = sPlayer.enumMoves.uSpec;
+                                qInput = sUtil.MoveType.uSpec;
                             }
                             //Down special
-                            else { qInput = sPlayer.enumMoves.dSpec; }
+                            else { qInput = sUtil.MoveType.dSpec; }
                         }
                     }
                     else //Its a neutral special
                     {
-                        qInput = sPlayer.enumMoves.nSpec;
+                        qInput = sUtil.MoveType.nSpec;
                     }
                 }
                 //Is the player inputting a heavy attack?
-                else if (forceHeavy || Input.GetKeyDown(controls.heavy) || (controls.rStickUse == InputAction.Heavy && (Input.GetAxis(controls.rHorz) != 0 || Input.GetAxis(controls.rVert) != 0)))
+                else if (forceHeavy || Input.GetKeyDown(controls.heavy) || (controls.rStickUse == sUtil.InputAction.Heavy && (Input.GetAxis(controls.rHorz) != 0 || Input.GetAxis(controls.rVert) != 0)))
                 {
                     //Is it non-directional?
                     if ((Input.GetKeyDown(controls.heavy) || forceHeavy) && (Input.GetAxis(controls.moveHorz) != 0 || Input.GetAxis(controls.moveVert) != 0))
@@ -515,77 +461,77 @@ public class sInput : MonoBehaviour
                         if (Mathf.Abs(Input.GetAxis(controls.moveHorz)) > Mathf.Abs(Input.GetAxis(controls.moveVert)))
                         {
                             //Forward strong
-                            if (Input.GetAxis(controls.moveHorz) < 0) { qInput = sPlayer.enumMoves.fStrong; }
+                            if (Input.GetAxis(controls.moveHorz) < 0) { qInput = sUtil.MoveType.fStrong; }
                             //Pivot Forward strong
                             else
                             {
                                 pChar.orientation = -pChar.orientation;
-                                qInput = sPlayer.enumMoves.fStrong;
+                                qInput = sUtil.MoveType.fStrong;
                             }
                         }
                         else
                         {
                             //Up strong
-                            if (Input.GetAxis(controls.moveVert) > 0) { qInput = sPlayer.enumMoves.uStrong; }
+                            if (Input.GetAxis(controls.moveVert) > 0) { qInput = sUtil.MoveType.uStrong; }
                             //Down strong
-                            else { qInput = sPlayer.enumMoves.dStrong; }
+                            else { qInput = sUtil.MoveType.dStrong; }
                         }
                     }
                     //Handling of right stick input
-                    else if (controls.rStickUse == InputAction.Heavy && (Input.GetAxis(controls.rHorz) != 0 || Input.GetAxis(controls.rVert) != 0))
+                    else if (controls.rStickUse == sUtil.InputAction.Heavy && (Input.GetAxis(controls.rHorz) != 0 || Input.GetAxis(controls.rVert) != 0))
                     {
                         //What type of strong?
                         if (Mathf.Abs(Input.GetAxis(controls.rHorz)) > Mathf.Abs(Input.GetAxis(controls.rVert)))
                         {
                             //Forward strong
-                            if (Input.GetAxis(controls.rHorz) < 0) { qInput = sPlayer.enumMoves.fStrong; }
+                            if (Input.GetAxis(controls.rHorz) < 0) { qInput = sUtil.MoveType.fStrong; }
                             //Pivot Forward strong
                             else
                             {
                                 pChar.orientation = -pChar.orientation;
-                                qInput = sPlayer.enumMoves.fStrong;
+                                qInput = sUtil.MoveType.fStrong;
                             }
                         }
                         else
                         {
                             //Up strong
-                            if (Input.GetAxis(controls.rVert) > 0) { qInput = sPlayer.enumMoves.uStrong; }
+                            if (Input.GetAxis(controls.rVert) > 0) { qInput = sUtil.MoveType.uStrong; }
                             //Down strong
-                            else { qInput = sPlayer.enumMoves.dStrong; }
+                            else { qInput = sUtil.MoveType.dStrong; }
                         }
                     }
                     else //Dedicated strong button with no direction, default to forward strong
                     {
-                        qInput = sPlayer.enumMoves.fStrong;
+                        qInput = sUtil.MoveType.fStrong;
                     }
                 }
-                else if (Input.GetKeyDown(controls.grab)) { qInput = sPlayer.enumMoves.grab; }
-                else if (Input.GetKeyDown(controls.jump)) { qInput = sPlayer.enumMoves.jump; }
+                else if (Input.GetKeyDown(controls.grab)) { qInput = sUtil.MoveType.grab; }
+                else if (Input.GetKeyDown(controls.jump)) { qInput = sUtil.MoveType.jump; }
             }
             //The player is airborne
             else
             {
                 //Is the player inputting an attack?
                 if (Input.GetKeyDown(controls.light) || Input.GetKeyDown(controls.heavy) ||
-                    ((controls.rStickUse == InputAction.Light || controls.rStickUse == InputAction.Heavy) && (Input.GetAxis(controls.rHorz) != 0 || Input.GetAxis(controls.rVert) != 0)))
+                    ((controls.rStickUse == sUtil.InputAction.Light || controls.rStickUse == sUtil.InputAction.Heavy) && (Input.GetAxis(controls.rHorz) != 0 || Input.GetAxis(controls.rVert) != 0)))
                 {
                     //Handling of right stick input
-                    if ((controls.rStickUse == InputAction.Light || controls.rStickUse == InputAction.Heavy) && (Input.GetAxis(controls.rHorz) != 0 || Input.GetAxis(controls.rVert) != 0))
+                    if ((controls.rStickUse == sUtil.InputAction.Light || controls.rStickUse == sUtil.InputAction.Heavy) && (Input.GetAxis(controls.rHorz) != 0 || Input.GetAxis(controls.rVert) != 0))
                     {
                         //What type of aerial?
                         if (Mathf.Abs(Input.GetAxis(controls.rHorz)) > Mathf.Abs(Input.GetAxis(controls.rVert)))
                         {
                             //Forward air
-                            if (Input.GetAxis(controls.rHorz) < 0) { qInput = sPlayer.enumMoves.fAir; }
+                            if (Input.GetAxis(controls.rHorz) < 0) { qInput = sUtil.MoveType.fAir; }
                             //Back air
-                            else { qInput = sPlayer.enumMoves.bAir; }
+                            else { qInput = sUtil.MoveType.bAir; }
                         }
                         else
                         {
                             //Up air
-                            if (Input.GetAxis(controls.rVert) > 0) { qInput = sPlayer.enumMoves.uAir; }
+                            if (Input.GetAxis(controls.rVert) > 0) { qInput = sUtil.MoveType.uAir; }
                             //Down air
-                            else { qInput = sPlayer.enumMoves.dAir; }
+                            else { qInput = sUtil.MoveType.dAir; }
                         }
                     }
                     //Is it not a neautral air?
@@ -595,21 +541,21 @@ public class sInput : MonoBehaviour
                         if (Mathf.Abs(Input.GetAxis(controls.moveHorz)) > Mathf.Abs(Input.GetAxis(controls.moveVert)))
                         {
                             //Forward air
-                            if (Input.GetAxis(controls.moveHorz) < 0) { qInput = sPlayer.enumMoves.fAir; }
+                            if (Input.GetAxis(controls.moveHorz) < 0) { qInput = sUtil.MoveType.fAir; }
                             //back air
-                            else { qInput = sPlayer.enumMoves.bAir; }
+                            else { qInput = sUtil.MoveType.bAir; }
                         }
                         else
                         {
                             //Up air
-                            if (Input.GetAxis(controls.moveVert) > 0) { qInput = sPlayer.enumMoves.uAir; }
+                            if (Input.GetAxis(controls.moveVert) > 0) { qInput = sUtil.MoveType.uAir; }
                             //Down light
-                            else { qInput = sPlayer.enumMoves.dAir; }
+                            else { qInput = sUtil.MoveType.dAir; }
                         }
                     }
                     else if (Input.GetKeyDown(controls.light) || Input.GetKeyDown(controls.heavy))//Its it a nair
                     {
-                        qInput = sPlayer.enumMoves.nAir;
+                        qInput = sUtil.MoveType.nAir;
                     }
                 }
                 //Is the player inputting airdoge/tech?
@@ -619,16 +565,16 @@ public class sInput : MonoBehaviour
                     if (Mathf.Abs(Input.GetAxis(controls.moveHorz)) > Mathf.Abs(Input.GetAxis(controls.moveVert)))
                     {
                         //Tech Back Roll
-                        if (Input.GetAxis(controls.moveHorz) > 0) { qInput = sPlayer.enumMoves.bRoll; }
+                        if (Input.GetAxis(controls.moveHorz) > 0) { qInput = sUtil.MoveType.bRoll; }
                         //Tech Forward Roll
-                        else { qInput = sPlayer.enumMoves.fRoll; }
+                        else { qInput = sUtil.MoveType.fRoll; }
                     }
                     else
                     {
                         //Tech hop
-                        if (Input.GetAxis(controls.moveVert) > 0) { qInput = sPlayer.enumMoves.techHop; }
+                        if (Input.GetAxis(controls.moveVert) > 0) { qInput = sUtil.MoveType.techHop; }
                         //Default to normal tech
-                        else { qInput = sPlayer.enumMoves.tech; }
+                        else { qInput = sUtil.MoveType.tech; }
                     }
                 }
                 //Is the player inputting a special?
@@ -641,12 +587,12 @@ public class sInput : MonoBehaviour
                         if (Mathf.Abs(Input.GetAxis(controls.moveHorz)) > Mathf.Abs(Input.GetAxis(controls.moveVert)))
                         {
                             //Forward special
-                            if (Input.GetAxis(controls.moveHorz) < 0) { qInput = sPlayer.enumMoves.fSpec; }
+                            if (Input.GetAxis(controls.moveHorz) < 0) { qInput = sUtil.MoveType.fSpec; }
                             //Pivot Forward special
                             else
                             {
                                 pChar.orientation = -pChar.orientation;
-                                qInput = sPlayer.enumMoves.fSpec;
+                                qInput = sUtil.MoveType.fSpec;
                             }
                         }
                         else
@@ -655,18 +601,18 @@ public class sInput : MonoBehaviour
                             if (Input.GetAxis(controls.moveVert) > 0)
                             {
                                 if (Input.GetAxis(controls.moveHorz) > .1) { pChar.orientation = -pChar.orientation; }
-                                qInput = sPlayer.enumMoves.uSpec;
+                                qInput = sUtil.MoveType.uSpec;
                             }
                             //Down special
-                            else { qInput = sPlayer.enumMoves.dSpec; }
+                            else { qInput = sUtil.MoveType.dSpec; }
                         }
                     }
                     else //Its a neutral special
                     {
-                        qInput = sPlayer.enumMoves.nSpec;
+                        qInput = sUtil.MoveType.nSpec;
                     }
                 }
-                else if (Input.GetKeyDown(controls.jump) && pChar.CanJump()) { qInput = sPlayer.enumMoves.jump; }
+                else if (Input.GetKeyDown(controls.jump) && pChar.CanJump()) { qInput = sUtil.MoveType.jump; }
             }
         }
 
@@ -680,116 +626,45 @@ public class sInput : MonoBehaviour
 
     public void ResetBuffer()
     {
-        qInput = sPlayer.enumMoves.none;
+        qInput = sUtil.MoveType.none;
         xBuf = 0;
     }
 
-    public ControlScheme GetControls { get { return controls; } }
+    public void Refresh()
+    {
+        pChar = gameObject.GetComponent<sPlayer>();
+        SetControls(gameObject.GetComponent<sPlayer>().ctrlProfile);
+    }
+
+    public sUtil.ControlScheme GetControls()
+    {
+        return controls;
+    }
     public void SetControls()
     {
-        if (File.Exists("Assets/Text/" + gameObject.GetComponent<sPlayer>().ctrlProfile.name + ".txt"))
-        {
-            Debug.Log("Player " + pChar.pNumber + " Control File Name: " + gameObject.GetComponent<sPlayer>().ctrlProfile.name);
-            StreamReader reader = new StreamReader("Assets/Text/" + gameObject.GetComponent<sPlayer>().ctrlProfile.name + ".txt");
-
-            controls.buffer = int.Parse(reader.ReadLine().Split(new char[] { ' ' }, 2, System.StringSplitOptions.None)[1]);
-            controls.moveHorz = reader.ReadLine().Split(new char[] { ' ' }, 2, System.StringSplitOptions.None)[1];
-            controls.moveVert = reader.ReadLine().Split(new char[] { ' ' }, 2, System.StringSplitOptions.None)[1];
-            controls.rStickUse = (InputAction)System.Enum.Parse(typeof(InputAction), reader.ReadLine().Split(new char[] { ' ' }, 2, System.StringSplitOptions.None)[1]);
-            controls.rHorz = reader.ReadLine().Split(new char[] { ' ' }, 2, System.StringSplitOptions.None)[1];
-            controls.rVert = reader.ReadLine().Split(new char[] { ' ' }, 2, System.StringSplitOptions.None)[1];
-            controls.left = (KeyCode)System.Enum.Parse(typeof(KeyCode), reader.ReadLine().Split(new char[] { ' ' }, 2, System.StringSplitOptions.None)[1]);
-            controls.right = (KeyCode)System.Enum.Parse(typeof(KeyCode), reader.ReadLine().Split(new char[] { ' ' }, 2, System.StringSplitOptions.None)[1]);
-            controls.up = (KeyCode)System.Enum.Parse(typeof(KeyCode), reader.ReadLine().Split(new char[] { ' ' }, 2, System.StringSplitOptions.None)[1]);
-            controls.down = (KeyCode)System.Enum.Parse(typeof(KeyCode), reader.ReadLine().Split(new char[] { ' ' }, 2, System.StringSplitOptions.None)[1]);
-            controls.light = (KeyCode)System.Enum.Parse(typeof(KeyCode), reader.ReadLine().Split(new char[] { ' ' }, 2, System.StringSplitOptions.None)[1]);
-            controls.heavy = (KeyCode)System.Enum.Parse(typeof(KeyCode), reader.ReadLine().Split(new char[] { ' ' }, 2, System.StringSplitOptions.None)[1]);
-            controls.lightToHeavy = float.Parse(reader.ReadLine().Split(new char[] { ' ' }, 2, System.StringSplitOptions.None)[1]);
-            controls.special = (KeyCode)System.Enum.Parse(typeof(KeyCode), reader.ReadLine().Split(new char[] { ' ' }, 2, System.StringSplitOptions.None)[1]);
-            controls.block = (KeyCode)System.Enum.Parse(typeof(KeyCode), reader.ReadLine().Split(new char[] { ' ' }, 2, System.StringSplitOptions.None)[1]);
-            controls.grab = (KeyCode)System.Enum.Parse(typeof(KeyCode), reader.ReadLine().Split(new char[] { ' ' }, 2, System.StringSplitOptions.None)[1]);
-            controls.jump = (KeyCode)System.Enum.Parse(typeof(KeyCode), reader.ReadLine().Split(new char[] { ' ' }, 2, System.StringSplitOptions.None)[1]);
-            controls.alt = (KeyCode)System.Enum.Parse(typeof(KeyCode), reader.ReadLine().Split(new char[] { ' ' }, 2, System.StringSplitOptions.None)[1]);
-            controls.pause = (KeyCode)System.Enum.Parse(typeof(KeyCode), reader.ReadLine().Split(new char[] { ' ' }, 2, System.StringSplitOptions.None)[1]);
-        }
-        else { SetControls((TextAsset)Resources.Load("Assets/Text/Keyboard_Default.txt")); Debug.Log("Error in SetControls(): sPlayer does not contain a valid file. Keyboard_Default instantiated instead."); }
+        controls = sUtil.ReadControls(gameObject.GetComponent<sPlayer>().ctrlProfile);
     }
-    /*public void SetControls()
+    public void SetControls(string name)
     {
-        if (File.Exists("Assets/Text/" + gameObject.GetComponent<sPlayer>().ctrlProfile.name + ".txt")) { SetControls(gameObject.GetComponent<sPlayer>().ctrlProfile); }
-        else SetControls((TextAsset)Resources.Load("Assets/Text/Keyboard_Default.txt"));
-    }*/
-    public void SetControls (TextAsset prf)
-    {
-        if (File.Exists("Assets/Text/" + gameObject.GetComponent<sPlayer>().ctrlProfile.name + ".txt"))
-        {
-            Debug.Log("Player " + pChar.pNumber + " Control File Name: " + gameObject.GetComponent<sPlayer>().ctrlProfile.name);
-            StreamReader reader = new StreamReader("Assets/Text/" + gameObject.GetComponent<sPlayer>().ctrlProfile.name + ".txt");
-
-            controls.buffer = int.Parse(reader.ReadLine().Split(new char[] { ' ' }, 2, System.StringSplitOptions.None)[1]);
-            controls.moveHorz = reader.ReadLine().Split(new char[] { ' ' }, 2, System.StringSplitOptions.None)[1];
-            controls.moveVert = reader.ReadLine().Split(new char[] { ' ' }, 2, System.StringSplitOptions.None)[1];
-            controls.rStickUse = (InputAction)System.Enum.Parse(typeof(InputAction), reader.ReadLine().Split(new char[] { ' ' }, 2, System.StringSplitOptions.None)[1]);
-            controls.rHorz = reader.ReadLine().Split(new char[] { ' ' }, 2, System.StringSplitOptions.None)[1];
-            controls.rVert = reader.ReadLine().Split(new char[] { ' ' }, 2, System.StringSplitOptions.None)[1];
-            controls.left = (KeyCode)System.Enum.Parse(typeof(KeyCode), reader.ReadLine().Split(new char[] { ' ' }, 2, System.StringSplitOptions.None)[1]);
-            controls.right = (KeyCode)System.Enum.Parse(typeof(KeyCode), reader.ReadLine().Split(new char[] { ' ' }, 2, System.StringSplitOptions.None)[1]);
-            controls.up = (KeyCode)System.Enum.Parse(typeof(KeyCode), reader.ReadLine().Split(new char[] { ' ' }, 2, System.StringSplitOptions.None)[1]);
-            controls.down = (KeyCode)System.Enum.Parse(typeof(KeyCode), reader.ReadLine().Split(new char[] { ' ' }, 2, System.StringSplitOptions.None)[1]);
-            controls.light = (KeyCode)System.Enum.Parse(typeof(KeyCode), reader.ReadLine().Split(new char[] { ' ' }, 2, System.StringSplitOptions.None)[1]);
-            controls.heavy = (KeyCode)System.Enum.Parse(typeof(KeyCode), reader.ReadLine().Split(new char[] { ' ' }, 2, System.StringSplitOptions.None)[1]);
-            controls.lightToHeavy = float.Parse(reader.ReadLine().Split(new char[] { ' ' }, 2, System.StringSplitOptions.None)[1]);
-            controls.special = (KeyCode)System.Enum.Parse(typeof(KeyCode), reader.ReadLine().Split(new char[] { ' ' }, 2, System.StringSplitOptions.None)[1]);
-            controls.block = (KeyCode)System.Enum.Parse(typeof(KeyCode), reader.ReadLine().Split(new char[] { ' ' }, 2, System.StringSplitOptions.None)[1]);
-            controls.grab = (KeyCode)System.Enum.Parse(typeof(KeyCode), reader.ReadLine().Split(new char[] { ' ' }, 2, System.StringSplitOptions.None)[1]);
-            controls.jump = (KeyCode)System.Enum.Parse(typeof(KeyCode), reader.ReadLine().Split(new char[] { ' ' }, 2, System.StringSplitOptions.None)[1]);
-            controls.alt = (KeyCode)System.Enum.Parse(typeof(KeyCode), reader.ReadLine().Split(new char[] { ' ' }, 2, System.StringSplitOptions.None)[1]);
-            controls.pause = (KeyCode)System.Enum.Parse(typeof(KeyCode), reader.ReadLine().Split(new char[] { ' ' }, 2, System.StringSplitOptions.None)[1]);
-        }
-        else { Debug.Log("Error in SetControls(TextAsset): File Does Not Exist)"); }
+        controls = sUtil.ReadControls(name);
     }
-    public void SetControls (ControlScheme ctrls)
+    public void SetControls (sUtil.ControlScheme ctrls)
     {
         controls = ctrls;
     }
-    public void SetControls (int bfr, string mH, string mV, InputAction rSU, string rH, string rV, KeyCode l, KeyCode r, KeyCode u, KeyCode d,
-                            KeyCode lA, KeyCode hA, float l2h, KeyCode s, KeyCode b, KeyCode g, KeyCode j, KeyCode a, KeyCode p)
-    {
-        controls.buffer = bfr;
-        controls.moveHorz = mH;
-        controls.moveVert = mV;
-        controls.rStickUse = rSU;
-        controls.rHorz = rH;
-        controls.rVert = rV;
-        controls.left = l;
-        controls.right = r;
-        controls.up = u;
-        controls.down = d;
-        controls.light = lA;
-        controls.heavy = hA;
-        controls.lightToHeavy = l2h;
-        controls.special = s;
-        controls.block = b;
-        controls.grab = g;
-        controls.jump = j;
-        controls.alt = a;
-        controls.pause = p;
-    }
-
-
+    
     override public string ToString()
     {
         string s=
             "Associated Player: " + pChar.pNumber + '\n' +
             "Player Verification: ";
                 if(pChar.GetHashCode() == gameObject.GetComponent<sPlayer>().GetHashCode()) { s+= "OK" + '\n'; } else { s+= "ERROR" + '\n'; }
-        s+= "Control Scheme file of Player: " + pChar.ctrlProfile.name + '\n' +
+        s+= "Control Scheme file of Player: " + pChar.ctrlProfile + '\n' +
             "File Verification: ";
-                if(pChar.ctrlProfile.name == gameObject.GetComponent<sPlayer>().ctrlProfile.name) { s+= "OK" + '\n'; } else { s+= "ERROR" + '\n'; }
-        s+= "Player Controls: " + '\n' + controls.ToString() + '\n' +
+                if(pChar.ctrlProfile == gameObject.GetComponent<sPlayer>().ctrlProfile) { s+= "OK" + '\n'; } else { s+= "ERROR" + '\n'; }
+        s+= '\n' + "~Player Controls~" + '\n' + controls.ToString() + '\n' +
             "Current Buffered Input: " + qInput + '\n' +
-            "Frames of Buffer Remaining: " + xBuf + '\n' + '\n' +
-            "sInput Printed on Frame: " + debugFrames;
+            "Frames of Buffer Remaining: " + xBuf + '\n';
 
         return s;
     }

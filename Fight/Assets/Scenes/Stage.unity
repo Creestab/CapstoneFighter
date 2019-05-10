@@ -1166,7 +1166,7 @@ MonoBehaviour:
   startingStocks: 3
   player1Name: Player 1
   player1Color: {r: 0.009242535, g: 0, b: 1, a: 0}
-  player1Controls: {fileID: 4900000, guid: 6a0b5b4fcbff71442b13e8f989b2ad4c, type: 3}
+  player1Controls: {fileID: 4900000, guid: e5f750112d1958e40832336a4367b8c7, type: 3}
   player1Moveset: {fileID: 4900000, guid: 0d96a1971dcab0e419d81f40e7150ef0, type: 3}
   player2Name: Player 2
   player2Color: {r: 1, g: 0, b: 0, a: 0}

@@ -2,16 +2,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class sBattleDriver : MonoBehaviour
 {
     public GameObject Player;
-
+    int frame;
     float tFPS;
     Text guiFR;
     Text guiT;
-    Text guiP1S;
-    Text guiP2S;
+    Text guiP1SL;
+    Text guiP1SC;
+    Text guiP2SL;
+    Text guiP2SC;
 
     //Match settings
     public int respawnTime;
@@ -34,12 +37,12 @@ public class sBattleDriver : MonoBehaviour
     private GameObject p2;
     private Vector3 p2Spawn;
     private int p2Stocks;
-    
 
     // Start is called before the first frame update
     void Start()
     {
         Application.targetFrameRate = 60;
+        frame = 0;
 
         p1Spawn = new Vector3(-14f, 7.5f, -2f);
         p2Spawn = new Vector3(14f, 7.5f, -2f);
@@ -56,30 +59,44 @@ public class sBattleDriver : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        frame++;
         UpdateGUI();
+
+        //DEBUGGING
+        if(Input.GetKeyDown(KeyCode.LeftControl))
+        {
+            Debug.Log("P1 Log @F" + frame);
+            Debug.Log(p1.GetComponent<sPlayer>().ToString() + '\n' + '\n');
+            Debug.Log(p1.GetComponent<sInput>().ToString() + '\n' + '\n');
+        }
     }
 
-    private void OnCollisionEnter(Collision collision)
+    void OnTriggerEnter(Collider other)
     {
-        if (collision.gameObject.GetComponent<sPlayer>().pNumber == 1)
+        Debug.Log("Blastzone Triggered");
+        if (other.material.name == "pmPlayer")
         {
-            p1Stocks--;
-            if (p1Stocks > 0)
+            Debug.Log("Player Collision with Blastzone");
+            if (other.material)
             {
-                Destroy(p1);
-                StartCoroutine("SpawnP1");
+                p1Stocks--;
+                if (p1Stocks > 0)
+                {
+                    Destroy(p1);
+                    StartCoroutine("SpawnP1");
+                }
+                else { }
             }
-            else { }
-        }
-        if (collision.gameObject.GetComponent<sPlayer>().pNumber == 2)
-        {
-            p2Stocks--;
-            if (p2Stocks > 0)
+            if (other.gameObject.GetComponent<sPlayer>().pNumber == 2)
             {
-                Destroy(p2);
-                StartCoroutine("SpawnP2");
+                p2Stocks--;
+                if (p2Stocks > 0)
+                {
+                    Destroy(p2);
+                    StartCoroutine("SpawnP2");
+                }
+                else { }
             }
-            else { }
         }
     }
 
@@ -89,20 +106,11 @@ public class sBattleDriver : MonoBehaviour
         else { yield return new WaitForSeconds(respawnTime); }
 
         p1 = Instantiate(Player, p1Spawn, Quaternion.Euler(0, 0, 0));
-        p1.GetComponent<Renderer>().material.color = player1Color;
-
-        p1.GetComponent<sPlayer>().pNumber = 1;
-        p1.GetComponent<sPlayer>().moveSpeed = 100;
-        p1.GetComponent<sPlayer>().jumpSpeed = 100;
-        p1.GetComponent<sPlayer>().airjumpSpeed = 100;
-        p1.GetComponent<sPlayer>().maxJumps = 2;
-        p1.GetComponent<sPlayer>().orientation = 1;
-        p1.GetComponent<sPlayer>().SetPlayerMoves(player1Moveset);
-        p1.GetComponent<sPlayer>().SetControlProfile(player1Controls);
-
-        //p1.GetComponent<sInput>().SetControls();
+        p1.GetComponent<sPlayer>().Spawn(1, player1Moveset.name, player1Controls.name, player1Color, 1);
+        p1.GetComponent<sInput>().Refresh();
 
         //Print Player 1 state on creation
+        Debug.Log("Battle Driver P1 TextAsset: " + player1Controls.name + ", " + player1Moveset.name);
         Debug.Log(p1.GetComponent<sPlayer>().ToString());
         Debug.Log(p1.GetComponent<sInput>().ToString());
 
@@ -115,19 +123,11 @@ public class sBattleDriver : MonoBehaviour
         else { yield return new WaitForSeconds(respawnTime); }
 
         p2 = Instantiate(Player, p2Spawn, Quaternion.Euler(0, 0, 0));
-        p2.GetComponent<Renderer>().material.color = player2Color;
-
-        p2.GetComponent<sPlayer>().pNumber = 2;
-        p2.GetComponent<sPlayer>().moveSpeed = 100;
-        p2.GetComponent<sPlayer>().jumpSpeed = 100;
-        p2.GetComponent<sPlayer>().airjumpSpeed = 100;
-        p2.GetComponent<sPlayer>().maxJumps = 2;
-        p2.GetComponent<sPlayer>().orientation = -1;
-        p2.GetComponent<sPlayer>().SetPlayerMoves(player2Moveset);
-
-        //p2.GetComponent<sInput>().SetControls(player2Controls);
+        p2.GetComponent<sPlayer>().Spawn(2, player2Moveset.name, player2Controls.name, player2Color, -1);
+        p2.GetComponent<sInput>().Refresh();
 
         //Print Player 2 state on creation
+        //Debug.Log("Battle Driver P2 TextAsset: " + player2Controls.name + ", " + player2Moveset.name);
         //Debug.Log(p2.GetComponent<sPlayer>().ToString());
         //Debug.Log(p2.GetComponent<sInput>().ToString());
 
@@ -136,20 +136,24 @@ public class sBattleDriver : MonoBehaviour
 
     private void StartGUI()
     {
-        guiFR = GameObject.Find("Framerate").GetComponent<Text>();
         guiT = GameObject.Find("Timer").GetComponent<Text>();
-        guiP1S = GameObject.Find("Player1Stocks").GetComponent<Text>();
-        guiP2S = GameObject.Find("Player2Stocks").GetComponent<Text>();
+        guiFR = GameObject.Find("Framerate").GetComponent<Text>();
+        guiP1SL = GameObject.Find("P1StockLabel").GetComponent<Text>();
+        guiP2SL = GameObject.Find("P1StockLabel").GetComponent<Text>();
+        guiP1SC = GameObject.Find("Player1Stocks").GetComponent<Text>();
+        guiP2SC = GameObject.Find("Player2Stocks").GetComponent<Text>();
 
-        GameObject.Find("P1StockLabel").GetComponent<Text>().text = player1Name;
-        GameObject.Find("P1StockLabel").GetComponent<Text>().color = player1Color;
-        guiP1S.text = p1Stocks.ToString();
-        guiP1S.color = player1Color;
+        guiP1SL.text = player1Name;
+        guiP1SL.color = player1Color;
+        guiP1SC.text = p1Stocks.ToString();
+        guiP1SC.color = player1Color;
 
-        GameObject.Find("P2StockLabel").GetComponent<Text>().text = player2Name;
-        GameObject.Find("P2StockLabel").GetComponent<Text>().color = player2Color;
-        guiP2S.text = p2Stocks.ToString();
-        guiP2S.color = player2Color;
+        guiP2SL.text = player2Name;
+        guiP2SL.color = player2Color;
+        guiP2SC.text = p2Stocks.ToString();
+        guiP2SC.color = player2Color;
+
+        Debug.Log("GUI Initialised");
     }
 
     private void UpdateGUI()
@@ -158,8 +162,8 @@ public class sBattleDriver : MonoBehaviour
         int seconds = Mathf.FloorToInt(Time.time - (minutes * 60));
         guiT.text = string.Format("{0:00}:{1:00}", minutes, seconds);
 
-        guiP1S.text = p1Stocks.ToString();
-        guiP2S.text = p2Stocks.ToString();
+        guiP1SC.text = p1Stocks.ToString();
+        guiP2SC.text = p2Stocks.ToString();
 
         tFPS += (Time.deltaTime - tFPS) * 0.1f;
         float fps = 1.0f / tFPS;

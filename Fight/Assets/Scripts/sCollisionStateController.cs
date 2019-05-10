@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class sCollisionStateController : StateMachineBehaviour
 {
-    [SerializeField] sPlayer.enumMoves _moveType;
+    [SerializeField] sUtil.MoveType _moveType;
     float[,] _fData;
     float _animLength;
     int numHB;
@@ -25,13 +25,13 @@ public class sCollisionStateController : StateMachineBehaviour
             if (stateInfo.normalizedTime >= _fData[i, 0] / _animLength && stateInfo.normalizedTime < _fData[i, 1] / _animLength)
             {
                 animator.gameObject.GetComponent<sPlayer>().GetPlayerSensors.Find(
-                    x => x.GetAtkType == _moveType).GetSensors[i].GetColliderState = sSensor.ColliderState.HitBox;
+                    x => x.GetAtkType == _moveType).GetSensors[i].GetColliderType = sUtil.ColliderState.HitBox;
 
             }
             else
             {
                 animator.gameObject.GetComponent<sPlayer>().GetPlayerSensors.Find(
-                    x => x.GetAtkType == _moveType).GetSensors[i].GetColliderState = sSensor.ColliderState.None;
+                    x => x.GetAtkType == _moveType).GetSensors[i].GetColliderType = sUtil.ColliderState.None;
             }
         }
     }

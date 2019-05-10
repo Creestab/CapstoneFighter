@@ -69,6 +69,7 @@
     <Compile Include="Assets\Scripts\sPlayer.cs" />
     <Compile Include="Assets\Scripts\sSensor.cs" />
     <Compile Include="Assets\Scripts\sStartSettings.cs" />
+    <Compile Include="Assets\Text\sUtil.cs" />
     <None Include="Assets\Text\Keyboard_Default.txt" />
     <None Include="Assets\Text\Moveset_Default.txt" />
     <None Include="Assets\Text\GCC2_Default.txt" />
