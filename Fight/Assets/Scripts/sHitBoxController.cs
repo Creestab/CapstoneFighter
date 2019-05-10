@@ -25,13 +25,13 @@ public class sHitBoxController : StateMachineBehaviour
             if (stateInfo.normalizedTime >= _fData[i, 0] / _animLength && stateInfo.normalizedTime < _fData[i, 1] / _animLength)
             {
                 animator.gameObject.GetComponent<sPlayer>().GetPlayerSensors.Find(
-                    x => x.GetAtkType == _moveType).GetSensors[i-1].GetColliderType = sData.ColliderState.HitBox;
+                    x => x.GetAtkType == _moveType).GetSensors[i-1].getColliderType = sData.ColliderState.HitBox;
 
             }
             else
             {
                 animator.gameObject.GetComponent<sPlayer>().GetPlayerSensors.Find(
-                    x => x.GetAtkType == _moveType).GetSensors[i-1].GetColliderType = sData.ColliderState.None;
+                    x => x.GetAtkType == _moveType).GetSensors[i-1].getColliderType = sData.ColliderState.None;
             }
         }
     }
@@ -42,7 +42,7 @@ public class sHitBoxController : StateMachineBehaviour
         for (int i = 1; i < numHB; i++)
         {
             animator.gameObject.GetComponent<sPlayer>().GetPlayerSensors.Find(
-                x => x.GetAtkType == _moveType).GetSensors[i - 1].GetColliderType = sData.ColliderState.None;
+                x => x.GetAtkType == _moveType).GetSensors[i - 1].getColliderType = sData.ColliderState.None;
         }
 
     }

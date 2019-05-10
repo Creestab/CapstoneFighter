@@ -105,7 +105,7 @@ public class sData
             return s;
         }
     }
-    
+
     /// <summary>
     ///List of moves
     ///{{frame 0, ending frame, # of hit instances, special frame type (0 if none), special effect value (0 if none), special frame start, special frame end, rarity (for draft: 0 common, 1 uncommon, 2 rare)},
@@ -114,7 +114,7 @@ public class sData
     public static Dictionary<string, float[,]> libMoves = new Dictionary<string, float[,]>()
     {
         //Jabs
-        {"Vanilla Punch", new float[,]{{0,10,1,0,0,0,0,0}, {2,5,3,0,10,1,1,0}}},
+        {"Vanilla Punch", new float[,]{{0,10,1,0,0,0,0,0}, {2,6,5,0,10,1,1,0}}},
 
         //Up Lights
         {"Vanilla Fist Pump", new float[,]{{0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}}},
@@ -235,4 +235,6 @@ public class sData
         }
         else throw new System.NullReferenceException("File not found");
     }
+
+    public static void CloseGame() { Application.Quit(); }
 }

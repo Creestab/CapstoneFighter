@@ -45,8 +45,8 @@ public class sBattleDriver : MonoBehaviour
         Application.targetFrameRate = 60;
         frame = 0;
 
-        p1Spawn = new Vector3(-14f, 7.5f, -2f);
-        p2Spawn = new Vector3(14f, 7.5f, -2f);
+        p1Spawn = new Vector3(-14f, 7.5f, -2.25f);
+        p2Spawn = new Vector3(14f, 7.5f, -2.25f);
 
         p1Stocks = startingStocks;
         p2Stocks = startingStocks;
@@ -62,12 +62,39 @@ public class sBattleDriver : MonoBehaviour
     {
         frame++;
         UpdateGUI();
+
+        if(Input.GetKeyDown(KeyCode.Escape)) { sData.CloseGame(); }
     }
 
     private void LateUpdate()
     {
+        if (p1 != null && p1.GetComponent<sPlayer>().dying == true)
+        {
+            Destroy(p1.transform.gameObject);
+            Debug.Log("Player 1 Destroyed");
+
+            p1Stocks--;
+            if (p1Stocks > 0)
+            {
+                StartCoroutine("SpawnP1");
+            }
+            else { Debug.Log("Player 2 Wins!"); sData.CloseGame(); }
+        }
+        if (p2!= null && p2.GetComponent<sPlayer>().dying == true)
+        {
+            Destroy(p2.transform.gameObject);
+            Debug.Log("Player 2 Destroyed");
+
+            p2Stocks--;
+            if (p2Stocks > 0)
+            {
+                StartCoroutine("SpawnP2");
+            }
+            else { Debug.Log("Player 1 Wins!"); sData.CloseGame(); }
+        }
+
         //DEBUGGING
-        if(Input.GetKeyDown(KeyCode.LeftControl))
+        if (Input.GetKeyDown(KeyCode.LeftControl))
         {
             Debug.Log("P1 Log @F" + frame);
             Debug.Log(p1.GetComponent<sPlayer>().ToString() + '\n' + '\n');
@@ -86,27 +113,11 @@ public class sBattleDriver : MonoBehaviour
 
             if (Player.GetComponent<sPlayer>().pNumber == 1)
             {
-                Destroy(p1);
-                Debug.Log("Player 1 Destroyed");
-
-                p1Stocks--;
-                if (p1Stocks > 0)
-                {
-                    StartCoroutine("SpawnP1");
-                }
-                else { }
+                p1.GetComponent<sPlayer>().dying = true;
             }
             if (Player.GetComponent<sPlayer>().pNumber == 2)
             {
-                Destroy(p2);
-                Debug.Log("Player 2 Destroyed");
-
-                p2Stocks--;
-                if (p2Stocks > 0)
-                {
-                    StartCoroutine("SpawnP2");
-                }
-                else { }
+                p2.GetComponent<sPlayer>().dying = true;
             }
         }
     }

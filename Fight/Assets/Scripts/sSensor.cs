@@ -28,52 +28,21 @@ public class sSensor : MonoBehaviour
         transform.localRotation = rot;
     }
 
-    public sData.ColliderState GetColliderType
+    public GameObject getPlayer { get { return _player; } }
+    public sData.ColliderState getColliderType
     {
         get { return _type; }
         set { _type = value; }
     }
-    public float[,] GetMoveData { get { return moveData; } }
+    public string getMoveName { get { return _moveName; } }
+    public float[,] getMoveData { get { return moveData; } }
+    public int getHitNumber { get { return _hitNum; } }
 
     private void OnTriggerEnter(Collider other)
     {
         if (_type == sData.ColliderState.HurtBox)
         {
-            if (other.material.name == "pmHitbox" && other.GetComponent<sSensor>().GetColliderType == sData.ColliderState.HitBox)
-            {                
-                //Process hit
-                sSensor hit = other.GetComponent<sSensor>();
-                sPlayer plr = _player.GetComponent<sPlayer>();
-                sPlayer opp = hit._player.GetComponent<sPlayer>();
-
-                //Damage
-                plr.ModDamage(moveData[hit._hitNum, 2]);
-                Debug.Log("Player " + plr.pNumber + " takes " + moveData[hit._hitNum, 2] + " damage from Player " + opp.pNumber + "'s " + hit._moveName);
-
-                //Hitstun
-
-
-                //Knockback
-
-            }
-        }
-    }
-
-    private void OnTriggerStay(Collider other)
-    {
-        if (_type == sData.ColliderState.HurtBox)
-        {
-            if (other.material.name.Contains("pmWall") && !_player.GetComponent<sPlayer>().OnStage())
-            {
-                if (_player.transform.position.x > 0)
-                {
-                    if(_player.transform.position.x < 20) _player.transform.Translate(new Vector3(1,0,0), Space.World);
-                }
-                else if(_player.transform.position.x > -20)
-                {
-                    _player.transform.Translate(new Vector3(-1, 0, 0), Space.World);
-                }
-            }
+           
         }
     }
 }

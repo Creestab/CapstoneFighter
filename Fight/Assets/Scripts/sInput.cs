@@ -26,9 +26,9 @@ public class sInput : MonoBehaviour
     {
         //Debug analog sticks
         //if (Input.GetKeyDown(controls.alt)) { Debug.Log("Printing axis values..."); }
-        if (Input.GetKeyDown(controls.alt))
+        /*if (Input.GetKeyDown(controls.alt))
         {
-            Debug.Log("   Left Analog Horizontal: " + Input.GetAxis("P1_LHorz"));
+            //Debug.Log("   Left Analog Horizontal: " + Input.GetAxis("P1_LHorz"));
             //Debug.Log("   Left Analog Vertical: " + Input.GetAxis("P1_LVert"));
             //Debug.Log("   Right Analog Horizontal: " + Input.GetAxis("P1_RHorz"));
             //Debug.Log("   Right Analog Vertical: " + Input.GetAxis("P1_RVert"));
@@ -36,7 +36,7 @@ public class sInput : MonoBehaviour
             //Debug.Log("   Left Analog Vertical: " + Input.GetAxis("P2_LVert"));
             //Debug.Log("   Right Analog Horizontal: " + Input.GetAxis("P2_RHorz"));
             //Debug.Log("   Right Analog Vertical: " + Input.GetAxis("P2_RVert"));
-        }
+        }*/
 
         //Clear buffered actions
         qInput = sData.MoveType.none;
@@ -606,6 +606,13 @@ public class sInput : MonoBehaviour
                 }
                 else if (Input.GetKeyDown(controls.jump) && pChar.CanJump()) { qInput = sData.MoveType.jump; }
             }
+        }
+
+        if(qInput == sData.MoveType.fLight || qInput == sData.MoveType.uLight || qInput == sData.MoveType.dLight || 
+            qInput == sData.MoveType.nAir || qInput == sData.MoveType.fAir || qInput == sData.MoveType.bAir || qInput == sData.MoveType.uAir || qInput == sData.MoveType.dAir || 
+            qInput == sData.MoveType.fStrong || qInput == sData.MoveType.uStrong || qInput == sData.MoveType.dStrong)
+        {
+            qInput = sData.MoveType.jab;
         }
 
         //Start frame buffer on a new input

@@ -29,7 +29,7 @@ public class sPlayer : MonoBehaviour
     int jumps;
 
     float dmg;
-    int stun;
+    float stun;
     bool actable;
     bool onStage;
     bool onWall;
@@ -46,9 +46,11 @@ public class sPlayer : MonoBehaviour
     public float airjumpSpeed;
     public float fallSpeed;
     public float maxFallSpeed;
+    public bool dying;
 
     //State modifications and scaling
     private static float zStart;
+    private static float zOffset = 1f;
     private static float gMoveMod = 5;   //Scales the speed of grounded movement
     private static float aMoveMod = 4;    //Scales the speed of aerial movement
     private static float jHeightMod = 50;  //Scales the force of jumping
@@ -63,11 +65,13 @@ public class sPlayer : MonoBehaviour
     void Start()
     {
         Spawn();
+
+        Physics.IgnoreCollision(box, GameObject.Find("Blastzone").GetComponent<MeshCollider>());
     }
 
     private void Update()
     {
-        if(gameObject.transform.position.z != zStart) gameObject.transform.position.Set(gameObject.transform.position.x, gameObject.transform.position.y, zStart);
+        //if (gameObject.transform.position.z != zStart) gameObject.transform.position.Set(gameObject.transform.position.x, gameObject.transform.position.y, zStart);
         if (rb.velocity.z != 0) rb.velocity.Set(rb.velocity.x, rb.velocity.y, 0);
 
         //Reset animation speed when not running
@@ -88,7 +92,7 @@ public class sPlayer : MonoBehaviour
         else if (_anim.GetCurrentAnimatorStateInfo(0).IsName("JumpSquat"))
         {
             actable = false;
-            if (_anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= (5/6))
+            if (_anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= (5 / 6))
             {
                 Debug.Log("End of JumpSquat");
                 actable = true;
@@ -117,7 +121,7 @@ public class sPlayer : MonoBehaviour
                 //Possible actions//
                 ////////////////////
 
-                if(airborne)
+                if (airborne)
                 {
                     //Bufferable aerial move processing
                     if (input == sData.MoveType.jump) { Jump('a'); }
@@ -220,12 +224,12 @@ public class sPlayer : MonoBehaviour
                     }
                     else if (Input.GetKey(gameObject.GetComponent<sInput>().GetControls().right))
                     {
-                        if (orientation != 1) 
+                        if (orientation != 1)
                         {
                             orientation = 1;
                         }
-                        if(!_anim.GetCurrentAnimatorStateInfo(0).IsName("Running"))
-                        { 
+                        if (!_anim.GetCurrentAnimatorStateInfo(0).IsName("Running"))
+                        {
                             _anim.Play("Running");
                         }
                         gameObject.transform.position -= gameObject.transform.right * moveSpeed * (gMoveMod / 1000);
@@ -237,7 +241,7 @@ public class sPlayer : MonoBehaviour
                             orientation = -1;
                         }
                         if (!_anim.GetCurrentAnimatorStateInfo(0).IsName("Running"))
-                        { 
+                        {
                             _anim.Play("Running");
                         }
                         gameObject.transform.position -= gameObject.transform.right * moveSpeed * (gMoveMod / 1000);
@@ -318,7 +322,7 @@ public class sPlayer : MonoBehaviour
             else //Currently performing a move
             {
                 //Aerial
-                if(airborne)
+                if (airborne)
                 {
 
                 }
@@ -348,12 +352,14 @@ public class sPlayer : MonoBehaviour
         if (orientation == 1)
         {
             gameObject.transform.eulerAngles = new Vector3(0f, 180f, 0f);
+            gameObject.transform.position = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y, zStart + zOffset);
         }
         else if (orientation == -1)
         {
             gameObject.transform.eulerAngles = new Vector3(0f, 0f, 0f);
+            gameObject.transform.position = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y, zStart - zOffset);
         }
-        
+
         rb.AddForce(new Vector3(0, mVert - (Mathf.Log10(Mathf.Abs(rb.velocity.y) + 100) * (fallSpeed - aMoveMod)), 0.0f));
         if (rb.velocity.y < -maxFallSpeed && stun == 0) { rb.velocity = new Vector3(rb.velocity.x, -maxFallSpeed, 0); }
     }
@@ -391,60 +397,104 @@ public class sPlayer : MonoBehaviour
         }
     }
 
-    void OnCollisionEnter(Collision collision)
+    void OnCollisionEnter(Collision other)
     {
-        if (collision.collider.material == null || collision.collider.material.name.Equals(""))
+        if (other.collider.material == null || other.collider.material.name.Equals(""))
         {
 
-        }
-        else if (collision.collider.material.name.Contains("pmPlayer"))
-        {
-            if (!collision.transform.root.gameObject.Equals(gameObject))
-            {
-                sPlayer pOther = collision.transform.root.gameObject.GetComponent<sPlayer>();
-                Vector2 ratio = new Vector2((pOther.gameObject.transform.position.x - gameObject.transform.position.x) / 
-                                    (Mathf.Abs(pOther.gameObject.transform.position.y - gameObject.transform.position.y) + Mathf.Abs(pOther.gameObject.transform.position.x - gameObject.transform.position.x)), 
-                    (pOther.gameObject.transform.position.y - gameObject.transform.position.y) / 
-                                    (Mathf.Abs(pOther.gameObject.transform.position.y - gameObject.transform.position.y) + Mathf.Abs(pOther.gameObject.transform.position.x - gameObject.transform.position.x)));
-
-                pOther.rb.velocity.Set(
-                    pOther.rb.velocity.x + (ratio.x * Mathf.Sqrt(pOther.GetDamage() / dmg)),
-                    pOther.rb.velocity.y + (ratio.y * Mathf.Sqrt(pOther.GetDamage() / dmg)), 0);
-                rb.velocity.Set(
-                    rb.velocity.x + (ratio.x * Mathf.Sqrt(dmg / pOther.GetDamage())),
-                    rb.velocity.y + (ratio.y * Mathf.Sqrt(dmg / pOther.GetDamage())), 0);
-            }
         }
         else
         {
-            Debug.Log("Player " + pNumber + " triggered with " + collision.collider.material.name);
+            Debug.Log("Player " + pNumber + " triggered with " + other.collider.material.name);
 
-            if (collision.collider.material.name.Contains("pmStage"))
+            if (other.collider.material.name.Contains("Hitbox"))
             {
-                onStage = true;
-                jumps = maxJumps;
-                airborne = false;
-                fastfall = false;
+                if (other.collider.GetComponent<sSensor>().getColliderType == sData.ColliderState.HitBox)
+                {
+                    //Process hit
+                    sSensor hit = other.collider.GetComponent<sSensor>();
+                    sPlayer opp = hit.getPlayer.GetComponent<sPlayer>();
+
+                    //Damage
+                    ModDamage(hit.getMoveData[hit.getHitNumber, 2]);
+                    Debug.Log("Player " + pNumber + " takes " + hit.getMoveData[hit.getHitNumber, 2] + " damage from Player " + opp.pNumber + "'s " + hit.getMoveName);
+
+                    //Hitstun
+                    stun = hit.getMoveData[hit.getHitNumber, 7];
+
+                    //Knockback
+                    if (opp.orientation == 1) { rb.AddForce(new Vector3(-Mathf.Cos(hit.getMoveData[hit.getHitNumber, 4] * Mathf.Deg2Rad),
+                                                Mathf.Sin(hit.getMoveData[hit.getHitNumber, 4] * Mathf.Deg2Rad), 0f).normalized
+                                                * (hit.getMoveData[hit.getHitNumber, 5] + (dmg * hit.getMoveData[hit.getHitNumber, 6])));
+                    }
+                    else { rb.AddForce(new Vector3(Mathf.Cos(hit.getMoveData[hit.getHitNumber, 4] * Mathf.Deg2Rad),
+                                                Mathf.Sin(hit.getMoveData[hit.getHitNumber, 4] * Mathf.Deg2Rad), 0f).normalized
+                                                * (hit.getMoveData[hit.getHitNumber, 5] + (dmg * hit.getMoveData[hit.getHitNumber, 6])));
+                    }
+                }
             }
-
-            if (collision.collider.material.name.Contains("pmWall"))
+            else if (other.collider.material.name.Contains("Player"))
             {
-                onWall = true;
-                jumps++;
+                if (!other.transform.root.gameObject.Equals(gameObject))
+                {
+                    sPlayer pOther = other.transform.root.gameObject.GetComponent<sPlayer>();
+                    Vector2 ratio = new Vector2((pOther.gameObject.transform.position.x - gameObject.transform.position.x) /
+                                        (Mathf.Abs(pOther.gameObject.transform.position.y - gameObject.transform.position.y) + Mathf.Abs(pOther.gameObject.transform.position.x - gameObject.transform.position.x)),
+                        (pOther.gameObject.transform.position.y - gameObject.transform.position.y) /
+                                        (Mathf.Abs(pOther.gameObject.transform.position.y - gameObject.transform.position.y) + Mathf.Abs(pOther.gameObject.transform.position.x - gameObject.transform.position.x)));
+
+                    pOther.rb.velocity.Set(
+                        pOther.rb.velocity.x + (ratio.x * Mathf.Sqrt(pOther.GetDamage() / dmg)),
+                        pOther.rb.velocity.y + (ratio.y * Mathf.Sqrt(pOther.GetDamage() / dmg)), 0);
+                    rb.velocity.Set(
+                        rb.velocity.x - (ratio.x * Mathf.Sqrt(dmg / pOther.GetDamage())),
+                        rb.velocity.y - (ratio.y * Mathf.Sqrt(dmg / pOther.GetDamage())), 0);
+                }
+            }
+            else
+            {
+                if (other.collider.material.name.Contains("Stage"))
+                {
+                    onStage = true;
+                    jumps = maxJumps;
+                    airborne = false;
+                    fastfall = false;
+                }
+
+                if (other.collider.material.name.Contains("Wall"))
+                {
+                    onWall = true;
+                    jumps = 1;
+                }
             }
         }
     }
 
-    void OnCollisionExit(Collision collision)
+    private void OnTriggerStay(Collider other)
     {
-        if (collision.collider.material.name.Contains("pmStage"))
+        if (other.material.name.Contains("Wall") && onStage)
+        {
+            if (gameObject.transform.position.x > 0)
+            {
+                if (gameObject.transform.position.x < 20) gameObject.transform.Translate(new Vector3(1, 0, 0), Space.World);
+            }
+            else if (gameObject.transform.position.x > -20)
+            {
+                gameObject.transform.Translate(new Vector3(-1, 0, 0), Space.World);
+            }
+        }
+    }
+
+    void OnCollisionExit(Collision other)
+    {
+        if (other.collider.material.name.Contains("pmStage"))
         {
             onStage = false;
             airborne = true;
             jumps--;
         }
 
-        if (collision.collider.material.name.Contains("pmWall"))
+        if (other.collider.material.name.Contains("pmWall"))
         {
             onWall = false;
         }
@@ -456,7 +506,7 @@ public class sPlayer : MonoBehaviour
         rb = gameObject.GetComponent<Rigidbody>();
         box = gameObject.GetComponent<BoxCollider>();
         box.size = new Vector3(3, 9, 3.5f); box.center = new Vector3 (0, 4.5f, 0);
-        zStart = transform.position.z;
+        zStart = rb.transform.position.z;
 
         jumps = maxJumps - 1;
         stun = 0;
@@ -590,7 +640,7 @@ public class sPlayer : MonoBehaviour
     {
         actable = state;
     }
-    public int GetStun()
+    public float GetStun()
     {
         return stun;
     }
@@ -628,6 +678,7 @@ public class sPlayer : MonoBehaviour
             "Color: " + pColor + '\n' +
             "Animator: " + _anim.name + '\n' +
             "Animation: " + _anim.GetCurrentAnimatorClipInfo(0)[0].clip.name + '\n' +
+            "Damage: " + dmg + "   Stun: " + stun + '\n' +
             "Location State: ";
                 if (airborne && !(onStage || onWall)) { s += "Airborne"; }
                 else if (onStage && !(airborne || onWall)) { s += "On Stage"; }

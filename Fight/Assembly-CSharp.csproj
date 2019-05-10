@@ -69,11 +69,12 @@
     <Compile Include="Assets\Scripts\sPlayer.cs" />
     <Compile Include="Assets\Scripts\sSensor.cs" />
     <Compile Include="Assets\Scripts\sStartSettings.cs" />
+    <None Include="Assets\Text\GCC1_Test.txt" />
     <None Include="Assets\Text\Keyboard_Default.txt" />
     <None Include="Assets\Text\XBOne_Default.txt" />
+    <None Include="Assets\Text\Keyboard_Test.txt" />
     <None Include="Assets\Text\Moveset_Default.txt" />
-    <None Include="Assets\Text\GCC2_Default.txt" />
-    <None Include="Assets\Text\GCC1_Default.txt" />
+    <None Include="Assets\Text\GCC2_Test.txt" />
     <Reference Include="Unity.TextMeshPro.Editor">
       <HintPath>E:/Desktop/Programming/Unity/CapstoneFighter/Fight/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
     </Reference>
