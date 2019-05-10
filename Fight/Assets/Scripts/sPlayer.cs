@@ -21,11 +21,14 @@ public class sPlayer : MonoBehaviour
     public string ctrlProfile;
     private GameObject rig;
     private Rigidbody rb;
+    private BoxCollider box;
 
     //Characters state
     public int orientation; //1 for facing right, -1 for facing left.
     public int maxJumps;
     int jumps;
+
+    int dmg;
     int stun;
     bool actable;
     bool onStage;
@@ -42,11 +45,13 @@ public class sPlayer : MonoBehaviour
     public float jumpSpeed;
     public float airjumpSpeed;
     public float fallSpeed;
+    public float maxFallSpeed;
 
     //State modifications and scaling
+    private static float zStart;
     private static float gMoveMod = 5;   //Scales the speed of grounded movement
     private static float aMoveMod = 4;    //Scales the speed of aerial movement
-    private static float jHeightMod = 15;  //Scales the force of jumping
+    private static float jHeightMod = 50;  //Scales the force of jumping
     private static float ffMod = 2;       //Scales the force of fastfalling
 
     //Current momentum
@@ -63,6 +68,9 @@ public class sPlayer : MonoBehaviour
 
     private void Update()
     {
+        if(gameObject.transform.position.z != zStart) gameObject.transform.position.Set(gameObject.transform.position.x, gameObject.transform.position.y, zStart);
+        if (rb.velocity.z != 0) rb.velocity.Set(rb.velocity.x, rb.velocity.y, 0);
+
         //Reset animation speed when not running
         if (!_anim.GetCurrentAnimatorStateInfo(0).IsName("Running")) { _anim.speed = 1; }
         //Process current state
@@ -81,17 +89,23 @@ public class sPlayer : MonoBehaviour
         else if (_anim.GetCurrentAnimatorStateInfo(0).IsName("JumpSquat"))
         {
             actable = false;
-            if (_anim.GetCurrentAnimatorStateInfo(0).normalizedTime == 1)
+            if (_anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= (5/6))
             {
+                Debug.Log("End of JumpSquat");
                 actable = true;
-                if (Input.GetKey(gameObject.GetComponent<sInput>().GetControls().jump)) { Jump('f'); }
-                else { Jump('s'); }
+                if (Input.GetKey(gameObject.GetComponent<sInput>().GetControls().jump)) Jump('f');
+                else Jump('s');
+
+                if (input == sUtil.MoveType.jump) input = sUtil.MoveType.none;
             }
         }
         else
         {
             actable = false;
         }
+
+        mHorz = 0;
+        mVert = 0;
 
         //Action processing
         if (IsActable())
@@ -112,14 +126,14 @@ public class sPlayer : MonoBehaviour
                     //Bufferable aerial move processing
                     if (input == sUtil.MoveType.jump) { _anim.Play("AirJump"); Jump('a'); }
                     else if (input == sUtil.MoveType.nAir) { _anim.Play("NeutralAir"); }
-                    else if (input == sUtil.MoveType.fAir) { _anim.Play("ForwardAir"); }
-                    else if (input == sUtil.MoveType.bAir) { _anim.Play("BackAir"); }
-                    else if (input == sUtil.MoveType.uAir) { _anim.Play("UpAir"); }
-                    else if (input == sUtil.MoveType.dAir) { _anim.Play("DownAir"); }
+                    //else if (input == sUtil.MoveType.fAir) { _anim.Play("ForwardAir"); }
+                    //else if (input == sUtil.MoveType.bAir) { _anim.Play("BackAir"); }
+                    //else if (input == sUtil.MoveType.uAir) { _anim.Play("UpAir"); }
+                    //else if (input == sUtil.MoveType.dAir) { _anim.Play("DownAir"); }
                     else if (input == sUtil.MoveType.nSpec) { _anim.Play("NeutralSpecial"); }
-                    else if (input == sUtil.MoveType.fSpec) { _anim.Play("ForwardSpecial"); }
-                    else if (input == sUtil.MoveType.uSpec) { _anim.Play("UpSpecial"); }
-                    else if (input == sUtil.MoveType.dSpec) { _anim.Play("DownSpecial"); }
+                    //else if (input == sUtil.MoveType.fSpec) { _anim.Play("ForwardSpecial"); }
+                    //else if (input == sUtil.MoveType.uSpec) { _anim.Play("UpSpecial"); }
+                    //else if (input == sUtil.MoveType.dSpec) { _anim.Play("DownSpecial"); }
                     else if (input == sUtil.MoveType.airdodge
                             || input == sUtil.MoveType.fRoll
                             || input == sUtil.MoveType.bRoll
@@ -131,24 +145,25 @@ public class sPlayer : MonoBehaviour
                     //Bufferable grounded move processing
                     if (input == sUtil.MoveType.jump) { _anim.Play("JumpSquat"); Debug.Log("Preparing for jump"); }
                     else if (input == sUtil.MoveType.jab) { _anim.Play("Jab"); }
-                    else if (input == sUtil.MoveType.fLight) { _anim.Play("ForwardLight"); }
-                    else if (input == sUtil.MoveType.uLight) { _anim.Play("UpLight"); }
-                    else if (input == sUtil.MoveType.dLight) { _anim.Play("DownLight"); }
-                    else if (input == sUtil.MoveType.fStrong) { _anim.Play("ForwardStrong"); }
-                    else if (input == sUtil.MoveType.uStrong) { _anim.Play("UpStrong"); }
-                    else if (input == sUtil.MoveType.dStrong) { _anim.Play("DownStrong"); }
-                    else if (input == sUtil.MoveType.nSpec) { _anim.Play("NeutralSpecial"); }
-                    else if (input == sUtil.MoveType.fSpec) { _anim.Play("ForwardSpecial"); }
+                    //else if (input == sUtil.MoveType.fLight) { _anim.Play("ForwardLight"); }
+                    //else if (input == sUtil.MoveType.uLight) { _anim.Play("UpLight"); }
+                    //else if (input == sUtil.MoveType.dLight) { _anim.Play("DownLight"); }
+                    //else if (input == sUtil.MoveType.fStrong) { _anim.Play("ForwardStrong"); }
+                    //else if (input == sUtil.MoveType.uStrong) { _anim.Play("UpStrong"); }
+                    //else if (input == sUtil.MoveType.dStrong) { _anim.Play("DownStrong"); }
+                    //else if (input == sUtil.MoveType.nSpec) { _anim.Play("NeutralSpecial"); }
+                    //else if (input == sUtil.MoveType.fSpec) { _anim.Play("ForwardSpecial"); }
                     else if (input == sUtil.MoveType.uSpec) { _anim.Play("UpSpecial"); }
-                    else if (input == sUtil.MoveType.dSpec) { _anim.Play("DownSpecial"); }
+                    //else if (input == sUtil.MoveType.dSpec) { _anim.Play("DownSpecial"); }
                     else if (input == sUtil.MoveType.dodge) { _anim.Play("SpotDodge"); }
-                    else if (input == sUtil.MoveType.fRoll) { _anim.Play("ForwardRoll"); }
-                    else if (input == sUtil.MoveType.bRoll) { _anim.Play("BackwardRoll"); }
-                    else if (input == sUtil.MoveType.grab) { _anim.Play("Grabbing"); }
+                    //else if (input == sUtil.MoveType.fRoll) { _anim.Play("ForwardRoll"); }
+                    //else if (input == sUtil.MoveType.bRoll) { _anim.Play("BackwardRoll"); }
+                    //else if (input == sUtil.MoveType.grab) { _anim.Play("Grabbing"); }
                 }
 
                 //Buffered action executed
                 gameObject.GetComponent<sInput>().ResetBuffer();
+                ClearInput();
             }
             //Process non-bufferable actions (like movement)
             else
@@ -161,7 +176,12 @@ public class sPlayer : MonoBehaviour
 
                     if (!fastfall)
                     {
-                        if (Input.GetAxis(gameObject.GetComponent<sInput>().GetControls().moveVert) < .8) { fastfall = true; mVert = -fallSpeed * ffMod; }
+                        if (Input.GetAxis(gameObject.GetComponent<sInput>().GetControls().moveVert) < -.7 && rb.velocity.y < 0 && rb.velocity.y > -fallSpeed * ffMod)
+                        {
+                            fastfall = true;
+                            mVert = -fallSpeed * ffMod;
+                            rb.velocity.Set(rb.velocity.x, -fallSpeed, 0);
+                        }
                         else mVert = -fallSpeed;
                     }
                     else mVert = -fallSpeed * ffMod;
@@ -169,27 +189,29 @@ public class sPlayer : MonoBehaviour
                     //Key Movement
                     if (Input.GetKey(gameObject.GetComponent<sInput>().GetControls().right))
                     {
-                        transform.position += transform.right * orientation * moveSpeed * (aMoveMod / 1000);
+                        gameObject.transform.position += gameObject.transform.right * orientation * moveSpeed * (aMoveMod / 1000);
                     }
                     else if (Input.GetKey(gameObject.GetComponent<sInput>().GetControls().left))
                     {
-                        transform.position -= transform.right * orientation * moveSpeed * (aMoveMod / 1000);
+                        gameObject.transform.position -= gameObject.transform.right * orientation * moveSpeed * (aMoveMod / 1000);
                     }
                     else //Analog Movement
                     {
                         if (Input.GetAxis(gameObject.GetComponent<sInput>().GetControls().moveHorz) > 0)
                         {
-                            transform.position += transform.right * orientation * moveSpeed * (aMoveMod / 1000) * Mathf.Abs(Input.GetAxis(gameObject.GetComponent<sInput>().GetControls().moveHorz));
+                            gameObject.transform.position -= gameObject.transform.right * orientation * moveSpeed * (aMoveMod / 1000) * Input.GetAxis(gameObject.GetComponent<sInput>().GetControls().moveHorz);
                         }
                         else if (Input.GetAxis(gameObject.GetComponent<sInput>().GetControls().moveHorz) < 0)
                         {
-                            transform.position -= transform.right * orientation * moveSpeed * (aMoveMod / 1000) * Mathf.Abs(Input.GetAxis(gameObject.GetComponent<sInput>().GetControls().moveHorz));
+                            gameObject.transform.position -= gameObject.transform.right * orientation * moveSpeed * (aMoveMod / 1000) * Input.GetAxis(gameObject.GetComponent<sInput>().GetControls().moveHorz);
                         }
                     }
                 }
                 else //Grounded actions
                 {
                     mVert = -10;
+                    mHorz = 0;
+                    if (rb.velocity.x != 0 || rb.velocity.y != 0) rb.velocity.Set(0, 0, 0);
 
                     //Grab actions
                     if (IsHoldingPlayer())
@@ -228,7 +250,7 @@ public class sPlayer : MonoBehaviour
                         if (!_anim.GetCurrentAnimatorStateInfo(0).IsName("Running")) _anim.Play("Running");
                         _anim.speed = Mathf.Abs(Input.GetAxis(gameObject.GetComponent<sInput>().GetControls().moveHorz));
 
-                        transform.position += transform.right * moveSpeed * (gMoveMod / 1000) * Mathf.Abs(Input.GetAxis(gameObject.GetComponent<sInput>().GetControls().moveHorz));
+                        gameObject.transform.position -= gameObject.transform.right * moveSpeed * (gMoveMod / 1000) * Mathf.Abs(Input.GetAxis(gameObject.GetComponent<sInput>().GetControls().moveHorz));
                     }
                     else if (Input.GetAxis(gameObject.GetComponent<sInput>().GetControls().moveVert) < -.5)
                     {
@@ -324,14 +346,15 @@ public class sPlayer : MonoBehaviour
         //Process orientation
         if (orientation == 1)
         {
-            gameObject.transform.eulerAngles = new Vector3(0f, 0f, 0f);
+            gameObject.transform.eulerAngles = new Vector3(0f, 180f, 0f);
         }
         else if (orientation == -1)
         {
-            gameObject.transform.eulerAngles = new Vector3(0f, 180f, 0f);
+            gameObject.transform.eulerAngles = new Vector3(0f, 0f, 0f);
         }
-
-        rb.AddForce(new Vector3(mHorz, mVert, 0.0f));
+        
+        rb.AddForce(new Vector3(mHorz, mVert - (Mathf.Log10(Mathf.Abs(rb.velocity.y) + 100) * (fallSpeed - aMoveMod)), 0.0f));
+        if (rb.velocity.y < -maxFallSpeed && stun == 0) { rb.velocity = new Vector3(rb.velocity.x, -maxFallSpeed, 0); }
     }
 
     public void Jump(char type)
@@ -341,49 +364,86 @@ public class sPlayer : MonoBehaviour
         //Short jump
         if (type == 's')
         {
-            mVert = jumpSpeed * jHeightMod / 1.5f;
+            rb.velocity = new Vector3(rb.velocity.x, 20.0f, 0.0f);
+            mVert = jumpSpeed * jHeightMod / 2;
         }
         //Full jump
         else if (type == 'f')
         {
+            rb.velocity = new Vector3(rb.velocity.x, 40.0f, 0.0f);
             mVert = jumpSpeed * jHeightMod;
         }
         //Aerial jump
         else if (type == 'a')
         {
-            rb.velocity = new Vector3(rb.velocity.x, 0.0f, 0.0f);
+            _anim.Play("AirJump");
+            rb.velocity = new Vector3(rb.velocity.x, 10.0f, 0.0f);
             mVert = airjumpSpeed * jHeightMod;
         }
 
+        if (!airborne)
+        {
+            airborne = true;
+            gameObject.transform.Translate(new Vector3(0, .5f, 0), Space.Self);
+        }
+
         jumps--;
+        _anim.Play("Airborne");
     }
 
     void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.name == "TopPlane" || collision.gameObject.name == "Platform")
+        if (collision.collider.material == null || collision.collider.material.name.Equals(""))
         {
-            onStage = true;
-            jumps = maxJumps;
-            airborne = false;
-            fastfall = false;
-        }
 
-        if (collision.gameObject.name == "LeftPlane" || collision.gameObject.name == "RightPlane")
+        }
+        else if (collision.collider.material.name.Contains("pmPlayer"))
         {
-            onWall = true;
-            jumps++;
+            if (!collision.transform.root.gameObject.Equals(gameObject))
+            {
+                sPlayer pOther = collision.transform.root.gameObject.GetComponent<sPlayer>();
+                Vector2 ratio = new Vector2((pOther.gameObject.transform.position.x - gameObject.transform.position.x) / 
+                                    (Mathf.Abs(pOther.gameObject.transform.position.y - gameObject.transform.position.y) + Mathf.Abs(pOther.gameObject.transform.position.x - gameObject.transform.position.x)), 
+                    (pOther.gameObject.transform.position.y - gameObject.transform.position.y) / 
+                                    (Mathf.Abs(pOther.gameObject.transform.position.y - gameObject.transform.position.y) + Mathf.Abs(pOther.gameObject.transform.position.x - gameObject.transform.position.x)));
+
+                pOther.rb.velocity.Set(
+                    pOther.rb.velocity.x + (ratio.x * Mathf.Sqrt(pOther.GetDamage() / dmg)),
+                    pOther.rb.velocity.y + (ratio.y * Mathf.Sqrt(pOther.GetDamage() / dmg)), 0);
+                rb.velocity.Set(
+                    rb.velocity.x + (ratio.x * Mathf.Sqrt(dmg / pOther.GetDamage())),
+                    rb.velocity.y + (ratio.y * Mathf.Sqrt(dmg / pOther.GetDamage())), 0);
+            }
+        }
+        else
+        {
+            Debug.Log("Player " + pNumber + " triggered with " + collision.collider.material.name);
+
+            if (collision.collider.material.name.Contains("pmStage"))
+            {
+                onStage = true;
+                jumps = maxJumps;
+                airborne = false;
+                fastfall = false;
+            }
+
+            if (collision.collider.material.name.Contains("pmWall"))
+            {
+                onWall = true;
+                jumps++;
+            }
         }
     }
 
     void OnCollisionExit(Collision collision)
     {
-        if (collision.gameObject.name == "TopPlane" || collision.gameObject.name == "Platform")
+        if (collision.collider.material.name.Contains("pmStage"))
         {
             onStage = false;
             airborne = true;
         }
 
-        if (collision.gameObject.name == "LeftPlane" || collision.gameObject.name == "RightPlane")
+        if (collision.collider.material.name.Contains("pmWall"))
         {
             onWall = false;
         }
@@ -393,6 +453,9 @@ public class sPlayer : MonoBehaviour
     {
         rig = gameObject.transform.GetChild(0).gameObject;
         rb = gameObject.GetComponent<Rigidbody>();
+        box = gameObject.GetComponent<BoxCollider>();
+        box.size = new Vector3(3, 9, 3.5f); box.center = new Vector3 (0, 4.5f, 0);
+        zStart = transform.position.z;
 
         jumps = maxJumps - 1;
         stun = 0;
@@ -453,15 +516,48 @@ public class sPlayer : MonoBehaviour
         rig.GetComponent<Renderer>().material.color = pColor;
     }
 
+    public sUtil.MoveType GetInput()
+    {
+        return input;
+    }
+    public void SendInput(sUtil.MoveType buf)
+    {
+        input = buf;
+    }
+    public void ClearInput()
+    {
+        input = sUtil.MoveType.none;
+    }
+    public bool NoInput()
+    {
+        if (input == sUtil.MoveType.none) return true;
+        else return false;
+    }
+
+    public int GetDamage()
+    {
+        return dmg;
+    }
+    public void SetDamage(int d)
+    {
+        dmg = d;
+    }
+    public void ModDamage(int d)
+    {
+        dmg += d;
+    }
+
     public bool CanJump()
     {
         if (jumps > 0) { return true; }
         else return false;
     }
+
     public void ModOrientation()
     {
         orientation = -orientation;
     }
+
     public bool OnStage()
     {
         return onStage;
@@ -489,7 +585,6 @@ public class sPlayer : MonoBehaviour
     public void ModFastfall()
     {
         fastfall = !fastfall;
-        if (!fastfall) { mVert = fallSpeed; }
     }
     public bool IsActable()
     {
@@ -536,6 +631,8 @@ public class sPlayer : MonoBehaviour
                 }
         s+= "Controls Profile: " + ctrlProfile + '\n' +
             "Rigidbody Coordinates:   X:" + rb.position.x + "   Y:" + rb.position.y + '\n' +
+            "Collider Dimensions:   X:" + box.size.x + "   Y:" + box.size.y + "   Z:" + box.size.z + '\n' +
+            "Collider Height: " + box.center.y + '\n' +
             "Color: " + pColor + '\n' +
             "Animator: " + _anim.name + '\n' +
             "Animation: " + _anim.GetCurrentAnimatorClipInfo(0)[0].clip.name + '\n' +

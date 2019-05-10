@@ -7,13 +7,14 @@ using UnityEngine.SceneManagement;
 public class sBattleDriver : MonoBehaviour
 {
     public GameObject Player;
+    public GameObject GUI;
+    private Canvas display;
+
     int frame;
     float tFPS;
     Text guiFR;
     Text guiT;
-    Text guiP1SL;
     Text guiP1SC;
-    Text guiP2SL;
     Text guiP2SC;
 
     //Match settings
@@ -50,10 +51,10 @@ public class sBattleDriver : MonoBehaviour
         p1Stocks = startingStocks;
         p2Stocks = startingStocks;
 
-        StartGUI();
-
         StartCoroutine("SpawnP1");
         StartCoroutine("SpawnP2");
+
+        StartGUI();
     }
 
     // Update is called once per frame
@@ -73,26 +74,33 @@ public class sBattleDriver : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        Debug.Log("Blastzone Triggered");
-        if (other.material.name == "pmPlayer")
+        Debug.Log("Blastzone triggered with material " + other.material.name);
+        if (other.material.name.Contains("pmPlayer"))
         {
-            Debug.Log("Player Collision with Blastzone");
-            if (other.material)
+            GameObject Player = other.transform.root.gameObject;
+
+            Debug.Log("Triggered by player " + Player.GetComponent<sPlayer>().pNumber);
+
+            if (Player.GetComponent<sPlayer>().pNumber == 1)
             {
+                Destroy(p1);
+                Debug.Log("Player 1 Destroyed");
+
                 p1Stocks--;
                 if (p1Stocks > 0)
                 {
-                    Destroy(p1);
                     StartCoroutine("SpawnP1");
                 }
                 else { }
             }
-            if (other.gameObject.GetComponent<sPlayer>().pNumber == 2)
+            if (Player.GetComponent<sPlayer>().pNumber == 2)
             {
+                Destroy(p2);
+                Debug.Log("Player 2 Destroyed");
+
                 p2Stocks--;
                 if (p2Stocks > 0)
                 {
-                    Destroy(p2);
                     StartCoroutine("SpawnP2");
                 }
                 else { }
@@ -136,22 +144,22 @@ public class sBattleDriver : MonoBehaviour
 
     private void StartGUI()
     {
+        GUI = GameObject.Find("GUI");
+        display = GUI.GetComponent<Canvas>();
+        display.renderMode = RenderMode.ScreenSpaceCamera;
+
         guiT = GameObject.Find("Timer").GetComponent<Text>();
         guiFR = GameObject.Find("Framerate").GetComponent<Text>();
-        guiP1SL = GameObject.Find("P1StockLabel").GetComponent<Text>();
-        guiP2SL = GameObject.Find("P1StockLabel").GetComponent<Text>();
         guiP1SC = GameObject.Find("Player1Stocks").GetComponent<Text>();
         guiP2SC = GameObject.Find("Player2Stocks").GetComponent<Text>();
+        
+        GameObject.Find("P1StockLabel").GetComponent<Text>().text = player1Name;
+        GameObject.Find("P2StockLabel").GetComponent<Text>().text = player2Name;
 
-        guiP1SL.text = player1Name;
-        guiP1SL.color = player1Color;
-        guiP1SC.text = p1Stocks.ToString();
-        guiP1SC.color = player1Color;
-
-        guiP2SL.text = player2Name;
-        guiP2SL.color = player2Color;
-        guiP2SC.text = p2Stocks.ToString();
-        guiP2SC.color = player2Color;
+        GameObject.Find("P1StockLabel").GetComponent<Text>().color = Color.blue;
+        GameObject.Find("P2StockLabel").GetComponent<Text>().color = Color.red;
+        guiP1SC.color = Color.blue;
+        guiP2SC.color = Color.red;
 
         Debug.Log("GUI Initialised");
     }

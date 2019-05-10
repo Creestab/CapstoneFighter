@@ -25,13 +25,13 @@ public class sCollisionStateController : StateMachineBehaviour
             if (stateInfo.normalizedTime >= _fData[i, 0] / _animLength && stateInfo.normalizedTime < _fData[i, 1] / _animLength)
             {
                 animator.gameObject.GetComponent<sPlayer>().GetPlayerSensors.Find(
-                    x => x.GetAtkType == _moveType).GetSensors[i].GetColliderType = sUtil.ColliderState.HitBox;
+                    x => x.GetAtkType == _moveType).GetSensors[i-1].GetColliderType = sUtil.ColliderState.HitBox;
 
             }
             else
             {
                 animator.gameObject.GetComponent<sPlayer>().GetPlayerSensors.Find(
-                    x => x.GetAtkType == _moveType).GetSensors[i].GetColliderType = sUtil.ColliderState.None;
+                    x => x.GetAtkType == _moveType).GetSensors[i-1].GetColliderType = sUtil.ColliderState.None;
             }
         }
     }

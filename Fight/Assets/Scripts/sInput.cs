@@ -25,30 +25,22 @@ public class sInput : MonoBehaviour
     private void Update()
     {
         //Debug analog sticks
-        /*if (Input.GetKeyDown(controls.alt)) { Debug.Log("Printing axis values..."); }
+        //if (Input.GetKeyDown(controls.alt)) { Debug.Log("Printing axis values..."); }
         if (Input.GetKeyDown(controls.alt))
         {
             Debug.Log("   Left Analog Horizontal: " + Input.GetAxis("P1_LHorz"));
-            Debug.Log("   Left Analog Vertical: " + Input.GetAxis("P1_LVert"));
-            Debug.Log("   Right Analog Horizontal: " + Input.GetAxis("P1_RHorz"));
-            Debug.Log("   Right Analog Vertical: " + Input.GetAxis("P1_RVert"));
-            Debug.Log("   Left Analog Horizontal: " + Input.GetAxis("P2_LHorz"));
-            Debug.Log("   Left Analog Vertical: " + Input.GetAxis("P2_LVert"));
-            Debug.Log("   Right Analog Horizontal: " + Input.GetAxis("P2_RHorz"));
-            Debug.Log("   Right Analog Vertical: " + Input.GetAxis("P2_RVert"));
-        }*/
+            //Debug.Log("   Left Analog Vertical: " + Input.GetAxis("P1_LVert"));
+            //Debug.Log("   Right Analog Horizontal: " + Input.GetAxis("P1_RHorz"));
+            //Debug.Log("   Right Analog Vertical: " + Input.GetAxis("P1_RVert"));
+            //Debug.Log("   Left Analog Horizontal: " + Input.GetAxis("P2_LHorz"));
+            //Debug.Log("   Left Analog Vertical: " + Input.GetAxis("P2_LVert"));
+            //Debug.Log("   Right Analog Horizontal: " + Input.GetAxis("P2_RHorz"));
+            //Debug.Log("   Right Analog Vertical: " + Input.GetAxis("P2_RVert"));
+        }
 
         //Clear buffered actions
-        if (qInput != sUtil.MoveType.none)
-        {
-            if (xBuf <= 0)
-            {
-                ResetBuffer();
-                //Debug.Log("Queued move expired" + "   Fixed Update #" + debugFramesFixed);
-            }
-            else { xBuf--; }
-        }
-        sUtil.MoveType qTemp = qInput;
+        qInput = sUtil.MoveType.none;
+        if(xBuf > 0) xBuf--;
         
         ////////////////
         //Input buffer//
@@ -617,11 +609,13 @@ public class sInput : MonoBehaviour
         }
 
         //Start frame buffer on a new input
-        if (qInput != qTemp)
+        if (qInput != sUtil.MoveType.none)
         {
             xBuf = controls.buffer;
+            pChar.SendInput(qInput);
             //Debug.Log("Input received: " + qInput + "   Fixed Update #" + debugFramesFixed);
         }
+        else if (!pChar.NoInput() && xBuf <= 0) pChar.ClearInput();
     }
 
     public void ResetBuffer()

@@ -4,14 +4,24 @@ using UnityEngine;
 
 public class sSensor : MonoBehaviour
 {
-    void Start()
-    {
-
-    }
-
     [SerializeField] sUtil.ColliderState _type;
     [SerializeField] GameObject _player;
     [SerializeField] string _move;
+
+    Vector3 pos;
+    Quaternion rot;
+
+    void Start()
+    {
+        pos = transform.localPosition;
+        rot = transform.localRotation;
+    }
+
+    private void Update()
+    {
+        transform.localPosition = pos;
+        transform.localRotation = rot;
+    }
 
     public sUtil.ColliderState GetColliderType
     {
@@ -29,9 +39,31 @@ public class sSensor : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (_type == sUtil.ColliderState.HurtBox && other.gameObject.GetComponent<sSensor>().GetColliderType == sUtil.ColliderState.HitBox)
+        if (_type == sUtil.ColliderState.HurtBox)
         {
-            //Process hit
+            if (other.material.name == "pmHitbox" && other.GetComponent<sSensor>().GetColliderType == sUtil.ColliderState.HitBox)
+            {
+                //Process hit
+
+            }
+        }
+    }
+
+    private void OnTriggerStay(Collider other)
+    {
+        if (_type == sUtil.ColliderState.HurtBox)
+        {
+            if (other.material.name.Contains("pmWall") && !_player.GetComponent<sPlayer>().OnStage())
+            {
+                if (_player.transform.position.x > 0)
+                {
+                    if(_player.transform.position.x < 20) _player.transform.Translate(new Vector3(1,0,0), Space.World);
+                }
+                else if(_player.transform.position.x > -20)
+                {
+                    _player.transform.Translate(new Vector3(-1, 0, 0), Space.World);
+                }
+            }
         }
     }
 }
